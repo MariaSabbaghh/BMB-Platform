@@ -1,0 +1,36 @@
+﻿# Large files
+*.csv
+*.pt
+*.pth
+*.pkl
+*.h5
+*.model
+
+# Upload directories
+uploads/
+temp/
+cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# System files - CRITICAL
+**/Android/**
+**/AppData/**
+**/anaconda3/**
+**/.conda/**
+
+# IDE
+.idea/
+.vscode/
