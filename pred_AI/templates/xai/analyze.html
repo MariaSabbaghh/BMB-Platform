@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Evaluation & Explainability</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analyze.css') }}">
+</head>
+<body>
+    <div class="analysis-container">
+
+        <!-- Header Section -->
+        <div class="header-section fade-in">
+            <div class="header-gradient">
+                <div class="breadcrumb">
+                    <a href="{{ url_for('xai.xai_page') }}"><i class="fas fa-arrow-left"></i> Back to Projects</a>
+                </div>
+                <h1 class="page-title">
+                    <i class="fas fa-chart-line"></i>
+                    Model Evaluation & Explainability
+                </h1>
+            </div>
+
+            <div class="model-info-bar">
+                <div class="model-details">
+                    <span class="info-badge" id="model-name">Model: Loading...</span>
+                    <span class="info-badge" id="model-type">Type: <span id="problem-type">Loading...</span></span>
+                    <span class="info-badge" id="created-date">Created: Loading...</span>
+                    <span class="info-badge" id="algo-name">Algorithm: {{ algo_name or 'Unknown' }}</span>
+                    <span class="info-badge" id="train-method">Train Method: {{ training_mode or 'Unknown' }}</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    Analysis Complete
+                </div>
+            </div>
+        </div>
+
+        <!-- Introduction Card -->
+        <div class="intro-card fade-in">
+            <div class="intro-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="intro-content">
+                <h3>Comprehensive Model Evaluation</h3>
+                <p>
+                    Explore metrics and visualizations for supervised and unsupervised models.
+                    Understand your model's performance with clustering, anomaly detection, dimensionality reduction, and association rules analysis.
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-grid fade-in">
+
+            <!-- CLUSTERING ANALYSIS SECTION -->
+            <div class="section-card" id="clustering-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-sitemap"></i>
+                        Clustering Analysis
+                    </div>
+                    <div class="section-description">
+                        Evaluate clustering performance with silhouette score, cluster distribution, and visualization.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="metrics-grid" id="clustering-metrics-grid">
+                        <div class="metric-card" data-tooltip="Measures how similar objects are to their own cluster vs other clusters (-1 to 1)">
+                            <span class="metric-label">Silhouette Score</span>
+                            <span class="metric-value" id="silhouette-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Number of clusters discovered by the algorithm">
+                            <span class="metric-label">Clusters Found</span>
+                            <span class="metric-value" id="clusters-found-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Ratio of between-cluster to within-cluster dispersion">
+                            <span class="metric-label">Calinski-Harabasz</span>
+                            <span class="metric-value" id="calinski-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Average similarity between clusters (lower is better)">
+                            <span class="metric-label">Davies-Bouldin</span>
+                            <span class="metric-value" id="davies-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Points identified as noise (DBSCAN only)">
+                            <span class="metric-label">Noise Points</span>
+                            <span class="metric-value" id="noise-points-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Largest cluster size">
+                            <span class="metric-label">Largest Cluster</span>
+                            <span class="metric-value" id="largest-cluster-value">--</span>
+                        </div>
+                    </div>
+                    <div class="clustering-charts-vertical">
+                        <div class="chart-block">
+                            <div class="chart-title">Cluster Visualization</div>
+                            <div class="chart-desc">2D visualization of data points colored by cluster assignment.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="cluster-scatter-plot"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Cluster Size Distribution</div>
+                            <div class="chart-desc">Bar chart showing the number of points in each cluster.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="cluster-size-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Silhouette Analysis</div>
+                            <div class="chart-desc">Detailed silhouette scores for each data point and cluster.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="silhouette-plot"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANOMALY DETECTION SECTION -->
+            <div class="section-card" id="anomaly-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-search"></i>
+                        Anomaly Detection
+                    </div>
+                    <div class="section-description">
+                        Analyze outlier detection performance and anomaly score distributions.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="metrics-grid" id="anomaly-metrics-grid">
+                        <div class="metric-card" data-tooltip="Percentage of data points identified as anomalies">
+                            <span class="metric-label">Anomaly Ratio</span>
+                            <span class="metric-value" id="anomaly-ratio-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Total number of anomalies detected">
+                            <span class="metric-label">Anomalies Found</span>
+                            <span class="metric-value" id="anomalies-found-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Number of normal/inlier points">
+                            <span class="metric-label">Normal Points</span>
+                            <span class="metric-value" id="normal-points-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Contamination parameter used in training">
+                            <span class="metric-label">Contamination</span>
+                            <span class="metric-value" id="contamination-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Average anomaly score">
+                            <span class="metric-label">Avg Score</span>
+                            <span class="metric-value" id="avg-score-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Range of anomaly scores">
+                            <span class="metric-label">Score Range</span>
+                            <span class="metric-value" id="score-range-value">--</span>
+                        </div>
+                    </div>
+                    <div class="anomaly-charts-vertical">
+                        <div class="chart-block">
+                            <div class="chart-title">Anomaly Scatter Plot</div>
+                            <div class="chart-desc">2D visualization showing normal points vs anomalies.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="anomaly-scatter-plot"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Anomaly Score Distribution</div>
+                            <div class="chart-desc">Histogram of anomaly scores across all data points.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="anomaly-score-histogram"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Decision Boundary</div>
+                            <div class="chart-desc">Visualization of the decision boundary separating normal from anomalous regions.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="decision-boundary-plot"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIMENSIONALITY REDUCTION SECTION -->
+            <div class="section-card" id="dimensionality-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        Dimensionality Reduction
+                    </div>
+                    <div class="section-description">
+                        Evaluate dimensionality reduction with variance explained and embedding quality.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="metrics-grid" id="dimensionality-metrics-grid">
+                        <div class="metric-card" data-tooltip="Percentage of variance retained in reduced dimensions">
+                            <span class="metric-label">Variance Explained</span>
+                            <span class="metric-value" id="variance-explained-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Original number of features">
+                            <span class="metric-label">Original Dims</span>
+                            <span class="metric-value" id="original-dims-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Reduced number of dimensions">
+                            <span class="metric-label">Reduced Dims</span>
+                            <span class="metric-value" id="reduced-dims-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Dimensionality reduction ratio">
+                            <span class="metric-label">Compression</span>
+                            <span class="metric-value" id="compression-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="KL divergence for t-SNE (lower is better)">
+                            <span class="metric-label">KL Divergence</span>
+                            <span class="metric-value" id="kl-divergence-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Reconstruction error for PCA">
+                            <span class="metric-label">Reconstruction Error</span>
+                            <span class="metric-value" id="reconstruction-error-value">--</span>
+                        </div>
+                    </div>
+                    <div class="dimensionality-charts-vertical">
+                        <div class="chart-block">
+                            <div class="chart-title">Reduced Dimensions Scatter Plot</div>
+                            <div class="chart-desc">2D/3D visualization of data in the reduced dimensional space.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="reduced-dims-scatter"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Explained Variance by Component</div>
+                            <div class="chart-desc">Bar chart showing variance explained by each principal component.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="explained-variance-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Component Loadings</div>
+                            <div class="chart-desc">Heatmap showing feature contributions to each principal component.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="component-loadings-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ASSOCIATION RULES SECTION -->
+            <div class="section-card" id="association-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-network-wired"></i>
+                        Association Rules
+                    </div>
+                    <div class="section-description">
+                        Analyze market basket patterns with support, confidence, and lift metrics.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="metrics-grid" id="association-metrics-grid">
+                        <div class="metric-card" data-tooltip="Total number of association rules discovered">
+                            <span class="metric-label">Rules Found</span>
+                            <span class="metric-value" id="rules-count-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Number of frequent itemsets identified">
+                            <span class="metric-label">Frequent Itemsets</span>
+                            <span class="metric-value" id="frequent-itemsets-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Highest lift value among all rules">
+                            <span class="metric-label">Max Lift</span>
+                            <span class="metric-value" id="max-lift-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Highest confidence value among all rules">
+                            <span class="metric-label">Max Confidence</span>
+                            <span class="metric-value" id="max-confidence-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Average lift across all rules">
+                            <span class="metric-label">Avg Lift</span>
+                            <span class="metric-value" id="avg-lift-value">--</span>
+                        </div>
+                        <div class="metric-card" data-tooltip="Minimum support threshold used">
+                            <span class="metric-label">Min Support</span>
+                            <span class="metric-value" id="min-support-value">--</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Rules Table -->
+                    <div id="top-rules-section" style="margin-top: 2rem;">
+                        <div class="chart-title">Top Association Rules</div>
+                        <div class="chart-desc">Highest performing rules ranked by lift and confidence.</div>
+                        <div id="top-rules-table"></div>
+                    </div>
+                    
+                    <div class="association-charts-vertical">
+                        <div class="chart-block">
+                            <div class="chart-title">Support vs Confidence</div>
+                            <div class="chart-desc">Scatter plot showing the relationship between support and confidence.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="support-confidence-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Lift Distribution</div>
+                            <div class="chart-desc">Histogram showing the distribution of lift values across all rules.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="lift-distribution-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Rules Network</div>
+                            <div class="chart-desc">Network visualization showing relationships between items.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="rules-network-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIFT & CUMULATIVE GAIN CHART (SUPERVISED) -->
+            <div class="section-card" id="lift-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Lift & Cumulative Gain Chart
+                    </div>
+                    <div class="section-description">
+                        Visualize your model's ability to capture positives compared to random selection.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="lift-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REGRESSION METRICS & PLOTS -->
+            <div class="section-card" id="regression-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Regression Metrics
+                    </div>
+                    <div class="section-description">
+                        Evaluate your regression model with industry-standard metrics and diagnostic plots.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="metrics-grid" id="regression-metrics-grid">
+                        <div class="metric-card"><span class="metric-label">MAE</span><span class="metric-value" id="mae-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">MSE</span><span class="metric-value" id="mse-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">RMSE</span><span class="metric-value" id="rmse-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">R²</span><span class="metric-value" id="r2-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Adj. R²</span><span class="metric-value" id="adjr2-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">MAPE</span><span class="metric-value" id="mape-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Median AE</span><span class="metric-value" id="medae-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Expl. Var</span><span class="metric-value" id="explvar-value">--</span></div>
+                    </div>
+                    <div class="regression-charts-vertical">
+                        <div class="chart-block">
+                            <div class="chart-title">Residual Plot</div>
+                            <div class="chart-desc">Shows the distribution of residuals (errors) for your predictions.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="residual-plot"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">QQ Plot</div>
+                            <div class="chart-desc">Compares the distribution of residuals to a normal distribution.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="qq-plot"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLASSIFICATION METRICS & PLOTS -->
+            <div class="section-card" id="classification-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Classification Metrics
+                    </div>
+                    <div class="section-description">
+                        Evaluate your classification model with accuracy, precision, recall, F1, and more.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="metrics-grid" id="classification-metrics-grid">
+                        <div class="metric-card"><span class="metric-label">Accuracy</span><span class="metric-value" id="accuracy-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Precision</span><span class="metric-value" id="precision-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Recall</span><span class="metric-value" id="recall-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">F1</span><span class="metric-value" id="f1-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">MCC</span><span class="metric-value" id="mcc-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Cohen's Kappa</span><span class="metric-value" id="kappa-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Log Loss</span><span class="metric-value" id="logloss-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">Brier Score</span><span class="metric-value" id="brier-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">ROC AUC</span><span class="metric-value" id="roc-auc-value">--</span></div>
+                        <div class="metric-card"><span class="metric-label">PR AUC</span><span class="metric-value" id="pr-auc-value">--</span></div>
+                    </div>
+                    
+                    <div class="section-card info-card" style="margin-bottom: 1.5rem;">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="fas fa-info-circle"></i>
+                                Why do the metrics below sometimes differ?
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <p>
+                                The <strong>Classification Metrics</strong> grid shows overall model performance (usually weighted averages across all classes).
+                                The <strong>Classification Report</strong> provides detailed metrics for each class, as well as macro and weighted averages.<br><br>
+                                <strong>Macro average</strong> treats all classes equally, while <strong>weighted average</strong> gives more importance to classes with more samples.<br><br>
+                                As a result, the numbers may differ slightly depending on class balance and the averaging method used.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div id="classification-report-section" style="margin-top:2rem; display:none;">
+                        <div class="chart-title">Classification Report</div>
+                        <div class="chart-desc">Detailed per-class precision, recall, F1, and support.</div>
+                        <div id="classification-report-table"></div>
+                    </div>
+                    
+                    <div class="classification-charts-vertical">
+                        <div class="chart-block">
+                            <div class="chart-title">Confusion Matrix</div>
+                            <div class="chart-desc">Shows the counts of true/false positives and negatives for each class.</div>
+                            <div class="chart-wrapper">
+                                <div id="confusion-matrix-table"></div>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">ROC Curve</div>
+                            <div class="chart-desc">Visualizes the trade-off between true positive rate and false positive rate.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="roc-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-block">
+                            <div class="chart-title">Precision-Recall Curve</div>
+                            <div class="chart-desc">Shows the balance between precision and recall for different thresholds.</div>
+                            <div class="chart-wrapper">
+                                <canvas id="pr-curve"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XAI SECTION -->
+            <div class="section-card" id="xai-section" style="display:none;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-brain"></i>
+                        Explainable AI (XAI)
+                    </div>
+                    <div class="section-description">
+                        Interpret your model with feature importance, cluster profiling, and component analysis.
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="feature-importance"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="cluster-profiling"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="component-analysis"></canvas>
+                        </div>
+                    </div>
+                    <div id="xai-details"></div>
+                </div>
+            </div>
+
+            <!-- EXPORT SECTION -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-download"></i>
+                        Export Analysis
+                    </div>
+                    <div class="section-description">
+                        Download your analysis results in various formats for reporting and documentation.
+                    </div>
+                </div>
+                <div class="section-content export-section">
+                    <div class="export-buttons">
+                        <button class="btn-export" onclick="exportToJSON()">
+                            <i class="fas fa-file-code"></i>
+                            Export JSON
+                        </button>
+                        <button class="btn-export" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf"></i>
+                            Export PDF
+                        </button>
+                        <button class="btn-export" onclick="printAnalysis()">
+                            <i class="fas fa-print"></i>
+                            Print Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+    
+    <script>
+        window.modelId = '{{ model_id }}';
+    </script>
+    <script src="{{ url_for('static', filename='scripts/xai/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/xai/analyze.js') }}"></script>
+</body>
+</html>

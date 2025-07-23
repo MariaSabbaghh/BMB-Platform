@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Model Comparison</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/compare.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Project Header -->
+        <div class="project-header">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="project-title">
+                        <div class="project-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <h1 class="project-name">Classification Project</h1>
+                    </div>
+                    <p class="project-description">Advanced machine learning classification models comparison</p>
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Created: 2025-07-02</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-robot"></i>
+                            <span>3 models</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Updated: 2025-07-08</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button class="btn-compare" onclick="showComparison()">
+                        <i class="fas fa-balance-scale"></i>
+                        Compare Models
+                    </button>
+                    <button class="btn-delete" onclick="deleteProject()">
+                        <i class="fas fa-trash"></i>
+                        Delete Project
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Comparison Section -->
+        <div class="comparison-section" id="comparison-section">
+            <!-- Model Selection Controls -->
+            <div class="comparison-controls">
+                <div class="model-selector">
+                    <label for="model-a">Select First Model:</label>
+                    <select id="model-a">
+                        <option value="">Choose first model</option>
+                        <option value="xgboost">XGBoost Classifier (model_20250708_100901)</option>
+                        <option value="logistic">Logistic Regression (model_20250708_100046)</option>
+                        <option value="random-forest">Random Forest (model_20250708_095234)</option>
+                        <option value="neural-net">Neural Network (model_20250708_101234)</option>
+                    </select>
+                </div>
+                
+                <div class="vs-indicator">
+                    <i class="fas fa-arrows-alt-h"></i>
+                    <span>VS</span>
+                </div>
+                
+                <div class="model-selector">
+                    <label for="model-b">Select Second Model:</label>
+                    <select id="model-b">
+                        <option value="">Choose second model</option>
+                        <option value="xgboost">XGBoost Classifier (model_20250708_100901)</option>
+                        <option value="logistic">Logistic Regression (model_20250708_100046)</option>
+                        <option value="random-forest">Random Forest (model_20250708_095234)</option>
+                        <option value="neural-net">Neural Network (model_20250708_101234)</option>
+                    </select>
+                </div>
+                
+                <button class="btn-hide-comparison" onclick="hideComparison()">
+                    <i class="fas fa-times"></i>
+                    Hide Comparison
+                </button>
+            </div>
+
+            <!-- Comparison Results -->
+            <div class="comparison-results" id="comparison-results" style="display: none;">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Model data for comparison
+        const modelData = {
+            'xgboost': {
+                name: 'XGBoost Classifier',
+                id: 'model_20250708_100901_89f08c29',
+                algorithm: 'XGBoost',
+                problemType: 'Classification',
+                created: 'Jul 8',
+                metrics: {
+                    accuracy: 84.7,
+                    precision: 85.0,
+                    recall: 84.7,
+                    f1: 84.6,
+                    rocAuc: 89.2,
+                    prAuc: 87.1
+                }
+            },
+            'logistic': {
+                name: 'Logistic Regression',
+                id: 'model_20250708_100046_09be07bf',
+                algorithm: 'Logistic Regression',
+                problemType: 'Classification',
+                created: 'Jul 8',
+                metrics: {
+                    accuracy: 88.1,
+                    precision: 88.4,
+                    recall: 88.1,
+                    f1: 88.1,
+                    rocAuc: 91.5,
+                    prAuc: 89.3
+                }
+            },
+            'random-forest': {
+                name: 'Random Forest',
+                id: 'model_20250708_095234_7a2b8c9d',
+                algorithm: 'Random Forest',
+                problemType: 'Classification',
+                created: 'Jul 8',
+                metrics: {
+                    accuracy: 85.2,
+                    precision: 86.1,
+                    recall: 85.2,
+                    f1: 85.6,
+                    rocAuc: 89.8,
+                    prAuc: 87.9
+                }
+            },
+            'neural-net': {
+                name: 'Neural Network',
+                id: 'model_20250708_101234_k8j7h5g2',
+                algorithm: 'Neural Network',
+                problemType: 'Classification',
+                created: 'Jul 8',
+                metrics: {
+                    accuracy: 89.3,
+                    precision: 90.2,
+                    recall: 89.3,
+                    f1: 89.7,
+                    rocAuc: 92.1,
+                    prAuc: 90.8
+                }
+            }
+        };
+
+        // Metric descriptions for tooltips
+        const metricDescriptions = {
+            accuracy: "Proportion of correct predictions.",
+            precision: "Proportion of positive identifications that were correct.",
+            recall: "Proportion of actual positives that were identified correctly.",
+            f1: "Harmonic mean of precision and recall.",
+            rocAuc: "Area under the ROC curve.",
+            prAuc: "Area under the Precision-Recall curve."
+        };
+
+        document.getElementById('model-a').addEventListener('change', updateComparison);
+        document.getElementById('model-b').addEventListener('change', updateComparison);
+
+        function showComparison() {
+            const section = document.getElementById('comparison-section');
+            section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth' });
+            showNotification('Comparison panel opened', 'info');
+        }
+
+        function hideComparison() {
+            const section = document.getElementById('comparison-section');
+            section.style.animation = 'fadeOut 0.5s ease-out';
+            setTimeout(() => {
+                section.style.display = 'none';
+                section.style.animation = '';
+            }, 500);
+            showNotification('Comparison panel closed', 'info');
+        }
+
+        function updateComparison() {
+            const modelAValue = document.getElementById('model-a').value;
+            const modelBValue = document.getElementById('model-b').value;
+            const resultsDiv = document.getElementById('comparison-results');
+
+            if (!modelAValue || !modelBValue || modelAValue === modelBValue) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            showLoadingState();
+
+            setTimeout(() => {
+                generateComparison(modelAValue, modelBValue);
+            }, 900);
+        }
+
+        function showLoadingState() {
+            const resultsDiv = document.getElementById('comparison-results');
+            resultsDiv.innerHTML = `
+                <div class="comparison-loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing model performance...</p>
+                </div>
+            `;
+            resultsDiv.style.display = 'block';
+        }
+
+        function generateComparison(modelAKey, modelBKey) {
+            const modelA = modelData[modelAKey];
+            const modelB = modelData[modelBKey];
+            const resultsDiv = document.getElementById('comparison-results');
+
+            const comparison = compareModels(modelA, modelB);
+
+            resultsDiv.innerHTML = `
+                <div class="comparison-header">
+                    <h3>
+                        <i class="fas fa-balance-scale"></i>
+                        Enhanced Model Performance Comparison
+                    </h3>
+                </div>
+                <div class="model-comparison-grid">
+                    <div class="model-comparison-card model-a">
+                        <div class="model-header">
+                            <div class="model-label">Model A</div>
+                            <div class="model-name">${modelA.name}</div>
+                        </div>
+                        <div class="model-id" title="Click to copy">${modelA.id}</div>
+                        <div class="model-meta">
+                            <span class="problem-type">${modelA.problemType}</span>
+                            <span class="created-date">${modelA.created}</span>
+                        </div>
+                    </div>
+                    <div class="vs-divider">
+                        <div class="vs-circle">
+                            <span>VS</span>
+                        </div>
+                    </div>
+                    <div class="model-comparison-card model-b">
+                        <div class="model-header">
+                            <div class="model-label">Model B</div>
+                            <div class="model-name">${modelB.name}</div>
+                        </div>
+                        <div class="model-id" title="Click to copy">${modelB.id}</div>
+                        <div class="model-meta">
+                            <span class="problem-type">${modelB.problemType}</span>
+                            <span class="created-date">${modelB.created}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="metrics-comparison">
+                    <div class="metrics-table-container">
+                        <table class="clean-metrics-table">
+                            <thead>
+                                <tr>
+                                    <th>Performance Metric <i class="fas fa-info-circle" title="Hover over each metric for details"></i></th>
+                                    <th>Model A</th>
+                                    <th>Model B</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${generateMetricRows(modelA, modelB, comparison)}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                ${generateSummaryCard(modelA, modelB, comparison)}
+            `;
+
+            addInteractivity();
+            setTimeout(() => {
+                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function compareModels(modelA, modelB) {
+            const metrics = ['accuracy', 'precision', 'recall', 'f1', 'rocAuc', 'prAuc'];
+            let scoreA = 0, scoreB = 0;
+            const winners = {};
+
+            metrics.forEach(metric => {
+                const valueA = modelA.metrics[metric];
+                const valueB = modelB.metrics[metric];
+                if (valueA > valueB) {
+                    scoreA++;
+                    winners[metric] = 'A';
+                } else if (valueB > valueA) {
+                    scoreB++;
+                    winners[metric] = 'B';
+                } else {
+                    winners[metric] = 'tie';
+                }
+            });
+
+            const primaryMetric = modelA.metrics.accuracy;
+            const secondaryMetric = modelB.metrics.accuracy;
+            const difference = Math.abs(primaryMetric - secondaryMetric);
+
+            let overallWinner = 'tie';
+            if (scoreA > scoreB) overallWinner = 'A';
+            else if (scoreB > scoreA) overallWinner = 'B';
+            else {
+                if (primaryMetric > secondaryMetric) overallWinner = 'A';
+                else if (secondaryMetric > primaryMetric) overallWinner = 'B';
+            }
+
+            let significance = 'minimal';
+            if (difference > 5) significance = 'significant';
+            else if (difference > 2) significance = 'moderate';
+            else if (difference > 1) significance = 'marginal';
+
+            return {
+                winner: overallWinner,
+                winners: winners,
+                scoreA: primaryMetric,
+                scoreB: secondaryMetric,
+                difference: difference,
+                significance: significance
+            };
+        }
+
+        function generateMetricRows(modelA, modelB, comparison) {
+            const metrics = [
+                { key: 'accuracy', label: 'Accuracy' },
+                { key: 'precision', label: 'Precision' },
+                { key: 'recall', label: 'Recall' },
+                { key: 'f1', label: 'F1 Score' },
+                { key: 'rocAuc', label: 'ROC AUC' },
+                { key: 'prAuc', label: 'PR AUC' }
+            ];
+
+            return metrics.map(metric => {
+                const valueA = modelA.metrics[metric.key];
+                const valueB = modelB.metrics[metric.key];
+                const winner = comparison.winners[metric.key];
+                return `
+                    <tr>
+                        <td class="metric-name" title="${metricDescriptions[metric.key] || ''}">${metric.label} <i class="fas fa-info-circle"></i></td>
+                        <td class="metric-value ${winner === 'A' ? 'winner' : ''}">${typeof valueA === 'number' ? valueA.toFixed(1) + '%' : '-'}</td>
+                        <td class="metric-value ${winner === 'B' ? 'winner' : ''}">${typeof valueB === 'number' ? valueB.toFixed(1) + '%' : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function generateSummaryCard(modelA, modelB, comparison) {
+            if (comparison.winner === 'tie') {
+                return `
+                    <div class="comparison-summary-card">
+                        <div class="summary-title">
+                            <i class="fas fa-equals"></i>
+                            Performance Tie
+                        </div>
+                        <div class="summary-details">
+                            <span>Accuracy: ${comparison.scoreA.toFixed(1)}% vs ${comparison.scoreB.toFixed(1)}%</span>
+                            <span>Δ${comparison.difference.toFixed(1)}% (${comparison.significance.charAt(0).toUpperCase() + comparison.significance.slice(1)})</span>
+                        </div>
+                        <div class="summary-explanation">
+                            The winner is determined by the highest accuracy. Other metrics are also considered for a comprehensive evaluation.
+                        </div>
+                    </div>
+                `;
+            }
+
+            const winnerModel = comparison.winner === 'A' ? modelA : modelB;
+            const loserModel = comparison.winner === 'A' ? modelB : modelA;
+            const winnerScore = comparison.winner === 'A' ? comparison.scoreA : comparison.scoreB;
+            const loserScore = comparison.winner === 'A' ? comparison.scoreB : comparison.scoreA;
+
+            return `
+                <div class="comparison-summary-card">
+                    <div class="summary-title">
+                        <i class="fas fa-trophy"></i>
+                        Winner: <span class="winner-name">${winnerModel.name}</span>
+                    </div>
+                    <div class="summary-details">
+                        <span>Accuracy: ${winnerScore.toFixed(1)}% vs ${loserScore.toFixed(1)}%</span>
+                        <span>+${comparison.difference.toFixed(1)}% (${comparison.significance.charAt(0).toUpperCase() + comparison.significance.slice(1)})</span>
+                    </div>
+                    <div class="summary-explanation">
+                        The winner is determined by the highest accuracy. Other metrics are also considered for a comprehensive evaluation.
+                    </div>
+                </div>
+            `;
+        }
+
+        function addInteractivity() {
+            document.querySelectorAll('.model-id').forEach(element => {
+                element.addEventListener('click', function() {
+                    navigator.clipboard.writeText(this.textContent).then(() => {
+                        showNotification('Model ID copied to clipboard!', 'success');
+                    }).catch(() => {
+                        showNotification('Failed to copy to clipboard', 'error');
+                    });
+                });
+            });
+            document.querySelectorAll('.metric-value.winner').forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.15)';
+                    this.style.zIndex = '10';
+                });
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.zIndex = '1';
+                });
+            });
+        }
+
+        function deleteProject() {
+            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                showNotification('Project deletion not implemented in demo', 'warning');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            const icon = getNotificationIcon(type);
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 400);
+            }, 4000);
+        }
+
+        function getNotificationIcon(type) {
+            switch (type) {
+                case 'success': return 'check-circle';
+                case 'error': return 'exclamation-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'info': 
+                default: return 'info-circle';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.getElementById('model-a').value = 'xgboost';
+                document.getElementById('model-b').value = 'logistic';
+                updateComparison();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

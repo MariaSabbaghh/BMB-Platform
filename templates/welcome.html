@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMB AI Platform - Choose Your AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <img src="{{ url_for('static', filename='images/bmb_logo.png') }}" alt="BMB Logo" class="header-logo">
+    </header>
+    
+    <div class="welcome-container">
+        <div class="content-section">
+            <h1>Choose Your AI Solution</h1>
+            <p class="subtitle">Select the AI approach that best fits your business needs</p>
+        </div>
+        
+        <div class="ai-selection">
+            <div class="ai-option predictive" onclick="window.location.href='/predictive'">
+                <div class="ai-content">
+                    <div class="ai-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h2>Predictive AI</h2>
+                    <p>An end-to-end platform for dataset processing and model training — upload and clean your data, preview results, train AI models, analyze performance, and download everything with ease.</p>
+                </div>
+                <div class="cta-button">
+                    <span>Get Started</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+            
+            <div class="ai-option generative" onclick="window.location.href='/generative'">
+                <div class="ai-content">
+                    <div class="ai-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h2>Generative AI</h2>
+                    <p>Unlock the power of creativity with Generative AI — effortlessly generate high-quality text, images, code, and more. Whether you’re drafting content, creating visuals, or automating tasks, our tools transform your ideas into intelligent, human-like output in seconds.</p>
+                </div>
+                <div class="cta-button">
+                    <span>Coming Soon</span>
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+
+            <div class="ai-option computer-vision" onclick="window.location.href='/computer-vision'">
+                <div class="ai-content">
+                    <div class="ai-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h2>Computer Vision</h2>
+                    <p>Advanced computer vision solutions including object detection, semantic segmentation, and image generation. Transform visual data into actionable insights.</p>
+                </div>
+                <div class="cta-button">
+                    <span>Get Started</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: external JS file for additional effects -->
+    <script src="{{ url_for('static', filename='scripts/welcome.js') }}"></script>
+</body>
+</html>

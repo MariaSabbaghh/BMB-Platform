@@ -1,0 +1,25 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "date": "2025-07-22 11:54:26",
+      "user": "user",
+      "changes": "Initial cleaned version",
+      "rows": 200,
+      "columns": 6,
+      "size": "5.89 KB",
+      "status": "previous"
+    },
+    {
+      "version": 2,
+      "date": "2025-07-23 09:27:40",
+      "user": "user",
+      "changes": "new_version",
+      "rows": 200,
+      "columns": 6,
+      "size": "5.89 KB",
+      "status": "current"
+    }
+  ],
+  "current_version": 2
+}

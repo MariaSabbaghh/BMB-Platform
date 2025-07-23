@@ -1,0 +1,15 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "date": "2025-07-23 13:16:38",
+      "user": "user",
+      "changes": "Initial cleaned version",
+      "rows": 15,
+      "columns": 2,
+      "size": "0.19 KB",
+      "status": "current"
+    }
+  ],
+  "current_version": 1
+}

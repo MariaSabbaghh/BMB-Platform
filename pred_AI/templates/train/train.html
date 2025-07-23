@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="train-container">
+    {% if not filename %}
+        <div class="train-no-file-warning">
+            <div style="text-align:center; padding: 2em;">
+                <i class="fas fa-exclamation-triangle" style="color:#e74c3c; font-size:2.5em;"></i>
+                <h2>No Dataset Selected</h2>
+                <p>You need to select a dataset before training a model.</p>
+                {% if file_missing %}
+                    <p style="color:#e74c3c; margin-top:1em;">
+                        <strong>File not found:</strong> {{ file_missing }}
+                    </p>
+                {% endif %}
+                <a href="{{ url_for('catalog.catalog_index') }}" class="btn-primary" style="margin-top:1em; padding:0.8em 2em; font-size:1.1em;">
+                    <i class="fas fa-database"></i> Go to Data Catalog
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <!-- Enhanced Header with Quick Access -->
+        <div class="train-header">
+            <h1 class="train-title">
+                <i class="fas fa-brain"></i> AI Model Training Hub
+            </h1>
+            <p class="train-subtitle">
+                Dataset: <span class="train-filename">{{ filename }}</span>
+            </p>
+            
+            <!-- Quick Access to Saved Models -->
+            <div class="saved-models-section">
+                <button class="saved-models-btn" onclick="goToSavedModels()">
+                    <i class="fas fa-folder-open"></i>
+                    <span>View Projects & Models</span>
+                    <small>Manage your trained models</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step Progress Guide -->
+        <div class="train-steps-guide">
+            <ol>
+                <li>Select Target Column</li>
+                <li>Choose Learning Type</li>
+                <li>Select Task &amp; Method</li>
+                <li>Start Training</li>
+                <li>Save to Project</li>
+            </ol>
+        </div>
+
+        <!-- Training Mode Selection -->
+        <div class="train-selection-section" id="train-selection-section">
+            <h2 class="train-section-title">Choose Your Training Method</h2>
+            <p class="train-section-subtitle">Select how you want to train your machine learning models</p>
+            
+            <div class="train-options-grid">
+                <!-- Self Training Option -->
+                <div class="train-option-box" id="self-training-option" onclick="selectTrainingMode('self-train')">
+                    <div class="train-option-icon train-icon-self">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="train-option-title">Self Training</h3>
+                    <p class="train-option-desc">Take full control of your model training. Select algorithms, configure parameters, and customize every aspect.</p>
+                    <ul class="train-feature-list">
+                        <li>Manual algorithm selection</li>
+                        <li>Custom parameter tuning</li>
+                        <li>Advanced configuration</li>
+                        <li>Project organization</li>
+                    </ul>
+                    <button class="train-select-btn train-btn-primary">
+                        <i class="fas fa-play"></i> Select Self Training
+                    </button>
+                </div>
+
+                <!-- Auto ML Option -->
+                <div class="train-option-box" id="auto-ml-option" onclick="selectTrainingMode('auto-ml')">
+                    <div class="train-option-icon train-icon-auto">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3 class="train-option-title">Auto ML Training</h3>
+                    <p class="train-option-desc">Let AI automatically select the best algorithms and optimize parameters for optimal performance.</p>
+                    <ul class="train-feature-list">
+                        <li>Automatic algorithm selection</li>
+                        <li>Intelligent parameter tuning</li>
+                        <li>One-click optimization</li>
+                        <li>Smart project management</li>
+                    </ul>
+                    <button class="train-select-btn train-btn-disabled">
+                        <i class="fas fa-clock"></i> Coming Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dataset Information -->
+        <div class="train-dataset-info" id="train-dataset-info" style="display: none;">
+            <h3 class="train-info-title">
+                <i class="fas fa-database"></i> Dataset Overview
+            </h3>
+            <div class="train-stats-grid">
+                <div class="train-stat-item">
+                    <div class="train-stat-number" id="train-row-count">-</div>
+                    <div class="train-stat-label">Rows</div>
+                </div>
+                <div class="train-stat-item">
+                    <div class="train-stat-number" id="train-column-count">-</div>
+                    <div class="train-stat-label">Columns</div>
+                </div>
+                <div class="train-stat-item">
+                    <div class="train-stat-number" id="train-missing-values">-</div>
+                    <div class="train-stat-label">Missing Values</div>
+                </div>
+                <div class="train-stat-item">
+                    <div class="train-stat-number" id="train-target-candidates">-</div>
+                    <div class="train-stat-label">Target Candidates</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Self Train Advanced Configuration -->
+        <div class="self-train-main-config" id="self-train-main-config" style="display: none;">
+            <div class="self-train-config-flex">
+                <!-- Left Box: Target Selection & Method -->
+                <div class="self-train-leftbox">
+                    <h3 class="self-train-config-label">Target Column</h3>
+                    <select id="target-column-select" class="self-train-select" onchange="onTargetColumnSelected()">
+                        <option value="" disabled selected>Select target column</option>
+                        <option value="none">None (for unsupervised learning)</option>
+                    </select>
+                    <p class="optional-note" id="target-column-note" style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                        Optional for unsupervised learning
+                    </p>
+                    
+                    <!-- Task choice buttons here -->
+                    <div class="self-train-task-choice">
+                        <label class="self-train-config-label">Choose Learning Type</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+                            <button type="button" id="btn-supervised" class="task-type-btn selected" onclick="selectTaskType('supervised')">Supervised</button>
+                            <button type="button" id="btn-unsupervised" class="task-type-btn" onclick="selectTaskType('unsupervised')">Unsupervised</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Show only one section below -->
+                    <div id="supervised-section" style="display: block;">
+                        <label class="self-train-config-label">Supervised Task</label>
+                        <select id="target-task-select" class="self-train-select" onchange="onTaskTypeSelected()">
+                            <option value="" disabled selected>Select task</option>
+                            <option value="regression">Regression</option>
+                            <option value="classification">Classification</option>
+                        </select> 
+
+                        <div id="method-select-box" style="margin-top: 18px;"></div>
+                    </div>
+                    
+                    <div id="unsupervised-section" style="display: none;">
+                        <label class="self-train-config-label">Unsupervised Task</label>
+                        <select id="unsup-task-type-select" class="self-train-select" onchange="onUnsupervisedTypeSelected()">
+                            <option value="" disabled selected>Select type</option>
+                            <option value="clustering">Clustering</option>
+                            <option value="anomaly">Anomaly Detection</option>
+                            <option value="association">Association</option>
+                            <option value="dimensionality_reduction">Dimensionality Reduction</option>
+                        </select>
+                        <div id="unsupervised-method-select-box" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+                
+                <!-- Center: Start Training, Help, Advanced Settings -->
+                <div class="self-train-centerbox">
+                    <!-- Start Button (round) -->
+                    <button class="self-train-start-btn" id="start-training-btn" disabled onclick="startTraining()">
+                        <i class="fas fa-play-circle"></i>
+                    </button>
+                    <div class="train-start-help-text">
+                        <h3>Click to start training!</h3>
+                        <p>Your model will be saved to a project after training</p>
+                    </div>
+                    
+                    <!-- Advanced Settings below, separated -->
+                    <div class="advanced-settings-divider"></div>
+                    <button class="self-train-advanced-btn" id="advanced-settings-btn" onclick="showAdvancedSettings()">
+                        <i class="fas fa-sliders-h"></i> Advanced Settings
+                    </button>
+                    
+                    <div id="advanced-settings-panel" style="display:none; margin-top: 10px;">
+                        <!-- === Advanced Settings Section START === -->
+                        <div class="advanced-settings-section">
+                            <h4><i class="fas fa-sliders-h"></i> Advanced Settings</h4>
+                            
+                            <div class="adv-settings-horizontal">
+                                <!-- Data Splitting Block -->
+                                <div class="adv-settings-block adv-settings-split">
+                                    <h5><i class="fas fa-code-branch"></i> Data Splitting</h5>
+                                    
+                                    <div class="adv-settings-content">
+                                        <div class="adv-param-row">
+                                            <label for="split-train-size">Training Set Size (%)</label>
+                                            <input type="number" min="1" max="99" step="1" id="split-train-size" value="80" placeholder="80">
+                                        </div>
+                                        
+                                        <div class="adv-param-row">
+                                            <label for="split-random-state">Random Seed</label>
+                                            <input type="number" id="split-random-state" placeholder="e.g. 42">
+                                        </div>
+                                        
+                                        <div class="adv-param-row">
+                                            <label>
+                                                <input type="checkbox" id="split-shuffle" checked>
+                                                Shuffle data before splitting
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Model Hyperparameters Block -->
+                                <div class="adv-settings-block adv-settings-hyper" id="adv-hyperparameters-section">
+                                    <h5><i class="fas fa-cogs"></i> Model Parameters</h5>
+                                    <div class="adv-settings-content">
+                                        <div id="adv-hyperparameters-content">
+                                            <em>Select a method to configure hyperparameters</em>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Cross Validation Block -->
+                                <div class="adv-settings-block adv-settings-cv">
+                                    <h5><i class="fas fa-sync-alt"></i> Validation Strategy</h5>
+                                    
+                                    <div class="adv-settings-content">
+                                        <div class="adv-param-row">
+                                            <label for="cv-type-select">Validation Method</label>
+                                            <select id="cv-type-select">
+                                                <option value="none">Hold-out Validation</option>
+                                                <option value="kfold">K-Fold Cross Validation</option>
+                                                <option value="stratifiedkfold">Stratified K-Fold</option>
+                                                <option value="shuffle_split">Shuffle Split</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div id="cv-options-panel"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- === Advanced Settings Section END === -->
+                    </div>
+                </div>
+                
+                <!-- Right: Time Series Button -->
+                <div class="self-train-rightbox">
+                    <button class="self-train-timeseries-btn" id="timeseries-btn" disabled>
+                        <i class="fas fa-clock"></i> Time Series
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Results Section -->
+        <div class="train-results-section" id="train-results-section" style="display: none;">
+            <div id="training-results-content"></div>
+        </div>
+
+        <!-- Training Configuration - For AutoML or fallback -->
+        <div class="train-config-section" id="train-config-section" style="display: none;">
+            <h3 class="train-config-title">
+                <i class="fas fa-sliders-h"></i> Configuration
+            </h3>
+            <div class="train-config-content" id="train-config-content">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Enhanced Loading Overlay -->
+<div class="train-loading-overlay" id="train-loading-overlay" style="display: none;">
+    <div class="train-loading-content">
+        <div class="train-spinner"></div>
+        <p class="train-loading-text">Training in progress...</p>
+        <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;">This may take a few minutes</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set the filename from template - CRITICAL FIX
+    const templateFilename = {{ filename|tojson if filename else 'null' }};
+    if (templateFilename !== null) {
+        console.log('[DEBUG] Template filename:', templateFilename);
+    } else {
+        console.log('[DEBUG] No filename from template');
+    }
+</script>
+
+<!-- Include the external JavaScript file -->
+<script src="{{ url_for('static', filename='scripts/train/train.js') }}"></script>
+
+<script>
+    // Set the filename after the external script loads
+    if (typeof setFilename === 'function' && templateFilename) {
+        setFilename(templateFilename);
+    } else if (templateFilename) {
+        // Fallback if setFilename function doesn't exist
+        filename = templateFilename;
+        console.log('[DEBUG] Fallback filename set:', filename);
+    }
+    
+    // Debug information
+    console.log('[DEBUG] Final filename value:', typeof filename !== 'undefined' ? filename : 'undefined');
+</script>
+{% endblock %}

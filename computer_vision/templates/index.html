@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block head %}
+<!-- Include this in ALL your HTML files -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> <!-- Must be last -->
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Intelligent Automation & Advanced Analytics</h1>
+            <p class="hero-subtitle">Empowering enterprises with cutting-edge AI solutions to transform data into actionable insights and automate complex business processes.</p>
+            <div class="hero-buttons">
+                <a href="#services" class="btn-primary">Explore Solutions</a>
+                <a href="#about" class="btn-secondary">Learn More</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="{{ url_for('static', filename='images/bmb_pic.png') }}" alt="BMB AI Analytics Platform">
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="section-header">
+            <h2>Our Core Solutions</h2>
+            <p>Comprehensive AI-driven platforms designed to accelerate your digital transformation journey</p>
+        </div>
+        
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🧠</div>
+                <h3>Business Intelligence & Advanced Analytics</h3>
+                <p>Equip your team with smart, visual, and direct access to data for every step of the analytics journey, enabling informed decision making.</p>
+                <ul class="service-features">
+                    <li>Real-time data visualization</li>
+                    <li>Predictive analytics</li>
+                    <li>Custom dashboards</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🤖</div>
+                <h3>AI & Automated Machine Learning</h3>
+                <p>Automate and accelerate your path from data to value with our end-to-end enterprise Automated Machine Learning platform.</p>
+                <ul class="service-features">
+                    <li>AutoML pipelines</li>
+                    <li>Model deployment</li>
+                    <li>Performance monitoring</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">👥</div>
+                <h3>Customer Data Platform</h3>
+                <p>Unify customer data into holistic profiles, delivering marketers real-time insights to capitalize on emerging opportunities.</p>
+                <ul class="service-features">
+                    <li>360° customer view</li>
+                    <li>Real-time personalization</li>
+                    <li>Cross-channel integration</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">⚙️</div>
+                <h3>RPA, Hyper Automation & AI Bots</h3>
+                <p>Transform businesses by embracing Intelligent Process Automation (IPA) combining RPA with AI to automate complex processes.</p>
+                <ul class="service-features">
+                    <li>Process automation</li>
+                    <li>Intelligent bots</li>
+                    <li>Workflow optimization</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Big Data & Data Management</h3>
+                <p>Help companies use analytics to identify valuable business opportunities and drive decisions from challenging data insights.</p>
+                <ul class="service-features">
+                    <li>Data lake architecture</li>
+                    <li>ETL/ELT processes</li>
+                    <li>Data governance</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>About BMB Drive</h2>
+                <p class="about-intro">We are pioneers in intelligent automation and advanced analytics, dedicated to helping enterprises unlock the full potential of their data through cutting-edge AI solutions.</p>
+                
+                <div class="about-details">
+                    <div class="about-item">
+                        <h4>Our Mission</h4>
+                        <p>To empower businesses with intelligent automation solutions that drive efficiency, innovation, and sustainable growth through data-driven decision making.</p>
+                    </div>
+                    
+                    <div class="about-item">
+                        <h4>Our Expertise</h4>
+                        <p>With deep expertise in AI, machine learning, and process automation, we deliver end-to-end solutions that transform how businesses operate and compete.</p>
+                    </div>
+                    
+                    <div class="about-item">
+                        <h4>Our Approach</h4>
+                        <p>We combine cutting-edge technology with industry best practices to create scalable, secure, and user-friendly platforms that deliver measurable business value.</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="{{ url_for('static', filename='images/bmb-whitelogo.png') }}" alt="BMB Drive Logo" class="footer-logo-img">
+                    <p>Intelligent Automation & Advanced Analytics</p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.linkedin.com/company/bmb/" class="social-link" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://www.bmbgroup.com" class="social-link" target="_blank" rel="noopener noreferrer">BMB Website</a>
+                </div>
+
+            </div>
+            
+            <div class="footer-section">
+                <ul>
+                    <h4>Support</h4>
+                    <li><a href="{{ url_for('contact') }}">Contact Us</a></li>     
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; Copyright © 2024 BMB Group. All Rights Reserved. Privacy Policy. Anti-Bribery and Anti-Corruption Policy.</p>
+        </div>
+    </footer>
+{% endblock %}

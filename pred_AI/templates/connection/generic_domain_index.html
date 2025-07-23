@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "connection/upload_connect_macro.html" import upload_connect_section %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> 
+
+<div class="connection-container">
+    <div class="connection-header">
+        <h2><i class="fas fa-network-wired"></i> Data Connection</h2>
+        <p class="connection-subtitle">Upload and connect your data sources</p>
+    </div>
+    <div class="connection-menu">
+        
+        <div id="upload-section">
+            {{ upload_connect_section() }}
+        </div>
+        <div id="uploaded-file-info" style="display:none;"></div>
+        
+        <!-- Unified centered unit for success and actions -->
+        <div id="continue-options" style="display:none;">
+            <div class="centered-unit">
+                <div class="success-box" id="success-box">
+                    <!-- Success message will be injected here -->
+                </div>
+                <div class="action-buttons">
+                    <button id="outlier-analysis-btn" class="btn-primary outlier-btn"><span>📊</span> Analyze Outliers First</button>
+                    <button id="correlation-analysis-btn" class="btn-primary correlation-btn"><span>📈</span> Correlation Analysis</button>
+                    <button id="data-ops-btn" class="btn-primary data-ops-btn"><span>🧬</span> Go to Data Operations</button>
+                </div>
+                <small class="recommend-note">
+                    💡 <strong>Recommended:</strong> Start with outlier analysis to identify and handle unusual data points before cleaning or correlation analysis.
+                </small>
+            </div>
+        </div>
+        
+        <div id="section-menu" style="display:none;" data-section="menu-section">
+            <div class="menu-header">
+                <h2 class="connection-title">Data Connection Menu</h2>
+            </div>
+            <div class="menu-cards-container">
+                {% block menu_cards %}
+                <!-- Override this block in domain-specific templates -->
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='scripts/connection/generic_domain_index.js') }}"></script>
+{% endblock %}
+
+{% endblock %}

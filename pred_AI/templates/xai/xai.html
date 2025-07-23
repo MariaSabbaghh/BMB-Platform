@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='train_result.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/xai.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/compare.css') }}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css" rel="stylesheet">
+{% endblock %}
+ 
+{% block content %}
+<div class="xai-container">
+    <!-- Enhanced Header -->
+    <div class="xai-header">
+        <h1 class="xai-title">
+            <i class="fas fa-project-diagram"></i> AI Model Analytics Hub
+        </h1>
+        <p class="xai-subtitle">Organize, analyze, and compare your machine learning models by projects</p>
+       
+        <div class="project-actions">
+            <div class="project-search-container">
+                <input type="text" id="project-search" placeholder="Search projects..." class="project-search-input">
+                <i class="fas fa-search project-search-icon"></i>
+            </div>
+            <button class="btn-create-project" onclick="showCreateProjectModal()">
+                <i class="fas fa-plus"></i> Create New Project
+            </button>
+        </div>
+    </div>
+ 
+    <!-- Quick Overview Stats -->
+    {% if projects %}
+        <div class="overview-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ projects|length }}</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ projects|sum(attribute='model_count') }}</div>
+                    <div class="stat-label">Total Models</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ projects|selectattr('model_count', 'gt', 0)|list|length }}</div>
+                    <div class="stat-label">Active Projects</div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+ 
+    <!-- Projects Display -->
+    {% if projects %}
+        <div class="projects-container">
+            {% for project in projects %}
+                <div class="project-card" data-project-id="{{ project.id }}">
+                    <!-- Project Header -->
+                    <div class="project-header" onclick="toggleProjectExpansion('{{ project.id }}')">
+                        <div class="project-info">
+                            <div class="project-title-container">
+                                <div class="project-expand-icon" id="expand-icon-{{ project.id }}">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                                <h2 class="project-title">
+                                    <i class="fas fa-folder"></i>
+                                    {{ project.name }}
+                                </h2>
+                            </div>
+                            <p class="project-description">{{ project.description or 'No description provided' }}</p>
+                            <div class="project-meta">
+                                <span class="project-date">
+                                    <i class="fas fa-calendar"></i>
+                                    Created: {{ project.created_at[:10] if project.created_at != 'Unknown' else 'Unknown' }}
+                                </span>
+                                <span class="model-count">
+                                    <i class="fas fa-robot"></i>
+                                    {{ project.model_count }} models
+                                </span>
+                                {% if project.last_updated %}
+                                <span class="last-updated">
+                                    <i class="fas fa-clock"></i>
+                                    Updated: {{ project.last_updated[:10] }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="project-actions" onclick="event.stopPropagation()">
+                            <button class="btn-project-action btn-compare"
+                                    onclick="enableProjectComparison('{{ project.id }}')"
+                                    {% if project.model_count < 2 %}disabled title="Need at least 2 models to compare"{% endif %}>
+                                <i class="fas fa-balance-scale"></i> Compare Models
+                            </button>
+                            <button class="btn-project-action btn-delete" onclick="deleteProject('{{ project.id }}')">
+                                <i class="fas fa-trash"></i> Delete Project
+                            </button>
+                        </div>
+                    </div>
+ 
+                    <!-- Project Content (Hidden by default) -->
+                    <div class="project-content" id="project-content-{{ project.id }}" style="display: none;">
+                        <!-- Model Comparison Section (Hidden by default) -->
+                        <div class="project-comparison-section" id="project-comparison-{{ project.id }}" style="display: none;">
+                            <div class="comparison-controls">
+                                <div class="model-selector">
+                                    <label>Select First Model:</label>
+                                    <select id="project-model-a-{{ project.id }}" onchange="updateProjectComparison('{{ project.id }}')">
+                                        <option value="">Choose first model</option>
+                                        {% for model in project.models %}
+                                            <option value="{{ model.id }}">{{ model.id }} ({{ model.problem_type|title }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                               
+                                <div class="vs-indicator">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                    <span>VS</span>
+                                </div>
+                               
+                                <div class="model-selector">
+                                    <label>Select Second Model:</label>
+                                    <select id="project-model-b-{{ project.id }}" onchange="updateProjectComparison('{{ project.id }}')">
+                                        <option value="">Choose second model</option>
+                                        {% for model in project.models %}
+                                            <option value="{{ model.id }}">{{ model.id }} ({{ model.problem_type|title }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                               
+                                <button class="btn-hide-comparison" onclick="hideProjectComparison('{{ project.id }}')">
+                                    <i class="fas fa-times"></i> Hide Comparison
+                                </button>
+                            </div>
+                           
+                            <div class="comparison-results" id="project-comparison-results-{{ project.id }}" style="display: none;">
+                                <!-- Comparison content will be loaded here -->
+                            </div>
+                        </div>
+ 
+                        <!-- Models Grid -->
+                        {% if project.models %}
+                            <div class="models-grid">
+                                {% for model in project.models %}
+                                    <div class="model-card" data-model-id="{{ model.id }}" data-project-id="{{ project.id }}">
+                                        <div class="model-header">
+                                            <div class="model-title-section">
+                                                <h3 class="model-title">{{ model.id }}</h3>
+                                                <div class="model-badges">
+                                                    <span class="model-type">{{ model.problem_type|title }}</span>
+                                                    <span class="performance-badge {{ 'excellent' if model.best_metric and model.best_metric.value > 0.9 else 'good' if model.best_metric and model.best_metric.value > 0.8 else 'fair' }}">
+                                                        {% if model.best_metric %}
+                                                            {{ (model.best_metric.value * 100)|round(1) }}%
+                                                        {% else %}
+                                                            N/A
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="model-info">
+                                            <div class="info-row">
+                                                <span class="label">Created:</span>
+                                                <span class="value">{{ model.created_at[:19] if model.created_at != 'Unknown' else 'Unknown' }}</span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span class="label">Models Trained:</span>
+                                                <span class="value">{{ model.n_models }}</span>
+                                            </div>
+                                            {% if model.best_metric %}
+                                                <div class="info-row">
+                                                    <span class="label">Best {{ model.best_metric.metric|title }}:</span>
+                                                    <span class="value">
+                                                        <span class="metric-value">{{ (model.best_metric.value * 100)|round(1) }}%</span>
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+                                            <div class="info-row">
+                                                <span class="label">Training Mode:</span>
+                                                <span class="value">
+                                                    <span class="training-mode">{{ model.training_mode|title }}</span>
+                                                </span>
+                                            </div>
+                                            <div class="info-row">
+                                                <span class="label">Project:</span>
+                                                <span class="value">
+                                                    <span class="project-badge">{{ project.name }}</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="model-actions">
+                                            <button class="btn-analyze" onclick="analyzeModel('{{ project.id }}', '{{ model.id }}')">
+                                                <i class="fas fa-microscope"></i> Analyze
+                                            </button>
+                                            <button class="btn-download" onclick="downloadModel('{{ model.id }}')">
+                                                <i class="fas fa-download"></i> Download Model
+                                            </button>
+                                            <button class="btn-delete" onclick="deleteModel('{{ project.id }}', '{{ model.id }}')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-models">
+                                <i class="fas fa-robot"></i>
+                                <p>No models in this project yet</p>
+                                <a href="{{ url_for('train_bp.train_page') }}" class="btn-train-model">
+                                    <i class="fas fa-plus"></i> Train First Model
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-folder-plus"></i>
+            <h3>No Projects Yet</h3>
+            <p>Create your first project to organize your AI models into folders for better management and comparison</p>
+            <button class="btn-primary" onclick="showCreateProjectModal()">
+                <i class="fas fa-plus"></i> Create First Project
+            </button>
+        </div>
+    {% endif %}
+</div>
+ 
+<!-- Create Project Modal (Hidden by default) -->
+<div class="modal-overlay" id="create-project-modal" style="display: none !important;">
+    <div class="modal-content create-project-modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-folder-plus"></i> Create New Project</h3>
+            <button class="close-btn" onclick="hideCreateProjectModal()">&times;</button>
+        </div>
+       
+        <div class="modal-body">
+            <form id="create-project-form">
+                <div class="form-group">
+                    <label for="project-name">Project Name *</label>
+                    <input type="text" id="project-name" required maxlength="50"
+                           placeholder="Enter project name (e.g., Customer Analytics, Sales Forecasting)">
+                </div>
+               
+                <div class="form-group">
+                    <label for="project-description">Description</label>
+                    <textarea id="project-description" maxlength="200"
+                              placeholder="Optional project description to help you remember what this project is about"
+                              rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+       
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="hideCreateProjectModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="btn-primary" onclick="createProject()">
+                <i class="fas fa-plus"></i> Create Project
+            </button>
+        </div>
+    </div>
+</div>
+ 
+{% endblock %}
+ 
+{% block extra_js %}
+<!-- Chart.js for visualization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+ 
+<!-- Enhanced XAI JavaScript -->
+<script src="{{ url_for('static', filename='scripts/xai/xai.js') }}"></script>
+{% endblock %}

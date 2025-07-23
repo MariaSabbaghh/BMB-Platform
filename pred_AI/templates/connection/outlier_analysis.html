@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> 
+
+<div class="module-container" style="max-width:1200px; margin-top:2rem;">
+    <!-- Navigation Buttons -->
+    <div style="margin-bottom:2rem; display:flex; gap:1rem; align-items:center; justify-content:flex-start;">
+        <button onclick="goBack()" class="nav-btn back-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #6c757d; background:#f8f9fa; color:#495057; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem;">
+            <span style="font-size:1.1rem;">←</span>
+            Go Back
+        </button>
+        <button onclick="goToDataOps()" class="nav-btn data-ops-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #059669; background:linear-gradient(135deg, #059669 0%, #10b981 100%); color:white; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem; box-shadow:0 2px 4px rgba(5,150,105,0.2);">
+            <span style="font-size:1.1rem;">🧬</span>
+            Data Operations
+        </button>
+        <button onclick="goToCorrelationAnalysis()" class="nav-btn correlation-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #007bff; background:linear-gradient(135deg, #007bff 0%, #00b4ff 100%); color:white; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem; box-shadow:0 2px 4px rgba(0,123,255,0.2);">
+            <span style="font-size:1.1rem;">📈</span>
+            Correlation Analysis
+        </button>
+    </div>
+    
+    <style>
+    .nav-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .back-btn:hover {
+        background: #e9ecef;
+        border-color: #495057;
+        color: #212529;
+    }
+    
+    .data-ops-btn:hover {
+        background: linear-gradient(135deg, #047857 0%, #059669 100%);
+        box-shadow: 0 4px 12px rgba(5,150,105,0.4);
+    }
+    
+    .nav-btn:active {
+        transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+        .nav-btn {
+            padding: 0.6rem 1.2rem !important;
+            font-size: 0.9rem !important;
+        }
+    }
+    </style>
+    
+    <h2 style="margin-bottom:1.5rem; display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.7rem; color:#e74c3c;">📊</span>
+        Outlier Analysis for <span style="color:#007bff;">{{ filename if filename is defined else "Your Data" }}</span>
+        <small style="color:#666; font-size:0.8rem; margin-left:auto;">({{ domain_display if domain_display is defined else "Connection" }})</small>
+    </h2>
+    
+    <!-- Column Overview -->
+    <div class="card-style" style="margin-bottom:1.5rem; padding:1.5rem;">
+        <h3 style="margin-bottom:1rem; color:#2d3748; font-size:1.2rem;">📋 Numeric Columns Overview</h3>
+        <div id="columns-overview">
+            <em>Loading overview...</em>
+        </div>
+    </div>
+    
+    <!-- Outlier Detection Form -->
+    <div class="card-style" style="margin-bottom:2rem; padding:2rem;">
+        <h3 style="margin-bottom:1rem; color:#2d3748; font-size:1.2rem;">🔍 Detect Outliers</h3>
+        
+        <form id="outlier-detection-form" style="display:flex; gap:15px; align-items:end; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <div style="min-width:200px;">
+                <label style="font-weight:500; color:#6a0dad; display:block; margin-bottom:5px;">Select Column</label>
+                <select id="column-select" style="width:100%; padding:8px; border-radius:6px; border:1px solid #e2e8f0;" required>
+                    <option value="">Choose a numeric column...</option>
+                    {% if columns is defined %}
+                        {% for column in columns %}
+                        <option value="{{ column }}">{{ column }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+            <div style="min-width:150px;">
+                <label style="font-weight:500; color:#6a0dad; display:block; margin-bottom:5px;">Detection Method</label>
+                <select id="method-select" style="width:100%; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
+                    <option value="IQR">IQR (1.5 * IQR)</option>
+                    <option value="Z-score">Z-score (±3 std)</option>
+                    <option value="percentile">Percentile (5%-95%)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary" style="padding:8px 20px;">🔍 Analyze Outliers</button>
+        </form>
+        
+        <div id="detection-message" style="margin-top:1rem; font-weight:500;"></div>
+    </div>
+    
+    <!-- Results Section -->
+    <div id="results-section" style="display:none;">
+        <div class="card-style" style="margin-bottom:2rem; padding:2rem;">
+            <h3 style="margin-bottom:1rem; color:#e74c3c; font-size:1.2rem;">📊 Outlier Detection Results</h3>
+            
+            <!-- Summary Stats -->
+            <div id="outlier-summary" style="margin-bottom:1.5rem; padding:1rem; background:#fff5f5; border-radius:8px; border-left:4px solid #e74c3c;">
+            </div>
+            
+            <!-- Visualization -->
+            <div id="outlier-plot" style="margin-bottom:1.5rem; text-align:center; background:#f9fafb; padding:1rem; border-radius:8px; border:1px solid #e5e7eb;">
+            </div>
+            
+            <!-- Action Buttons -->
+            <div id="outlier-actions" style="display:flex; gap:15px; align-items:center; flex-wrap:wrap; margin-bottom:1rem; padding:1.5rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
+                <div style="flex:1; min-width:200px;">
+                    <h4 style="margin-bottom:0.5rem; color:#dc2626; font-size:1rem;">⚠️ Outlier Removal</h4>
+                    <p style="margin:0; color:#666; font-size:0.9rem;">
+                        Removing outliers will permanently delete these data points from your dataset.
+                        Make sure you want to proceed before clicking remove.
+                    </p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" id="remove-outliers-btn" class="btn-primary" style="background:#dc2626; border-color:#dc2626; padding:8px 16px; font-size:0.95rem;">
+                        🗑️ Remove Outliers
+                    </button>
+                    <button type="button" id="keep-outliers-btn" class="btn-secondary" style="padding:8px 16px; font-size:0.95rem;">
+                        ✅ Keep Data As Is
+                    </button>
+                </div>
+            </div>
+            
+            <div id="removal-message" style="font-size:0.9rem; color:#666;"></div>
+        </div>
+    </div>
+    
+    <!-- Continue Button -->
+    <div id="continue-section" style="display:none; text-align:center; margin:2rem 0;">
+        <button onclick="goToDataOps()" class="btn-primary" style="padding:1rem 2rem; font-size:1.1rem;">
+            ➡️ Continue to Data Cleaning Operations
+        </button>
+    </div>
+</div>
+
+<!-- Pass data to JavaScript -->
+<script>
+    window.pageData = {
+        currentDomain: '{{ domain if domain is defined else "connection" }}',
+        domainDisplay: '{{ domain_display if domain_display is defined else "Connection" }}',
+        filename: '{{ filename if filename is defined else "" }}'
+    };
+    console.log('Outlier analysis page data set:', window.pageData);
+</script>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='scripts/connection/outlier_analysis.js') }}"></script>
+{% endblock %}
+
+{% endblock %}

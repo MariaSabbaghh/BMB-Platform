@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}"> 
+
+<div class="module-container" style="max-width:1200px; margin-top:2rem;">
+    <!-- Navigation Buttons -->
+    <div style="margin-bottom:2rem; display:flex; gap:1rem; align-items:center; justify-content:flex-start;">
+        <button onclick="goBack()" class="nav-btn back-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #6c757d; background:#f8f9fa; color:#495057; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem;">
+            <span style="font-size:1.1rem;">←</span>
+            Go Back
+        </button>
+        <button onclick="goToOutlierAnalysis()" class="nav-btn outlier-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #e74c3c; background:linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color:white; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem; box-shadow:0 2px 4px rgba(231,76,60,0.2);">
+            <span style="font-size:1.1rem;">📊</span>
+            Outlier Analysis
+        </button>
+        <button onclick="goToCorrelationAnalysis()" class="nav-btn correlation-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #007bff; background:linear-gradient(135deg, #007bff 0%, #00b4ff 100%); color:white; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem; box-shadow:0 2px 4px rgba(0,123,255,0.2);">
+            <span style="font-size:1.1rem;">📈</span>
+            Correlation Analysis
+        </button>
+    </div>
+    
+    <style>
+    .nav-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .back-btn:hover {
+        background: #e9ecef;
+        border-color: #495057;
+        color: #212529;
+    }
+    .outlier-btn:hover {
+        background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+        box-shadow: 0 4px 12px rgba(231,76,60,0.4);
+    }
+    .correlation-btn:hover {
+        background: linear-gradient(135deg, #0069d9 0%, #0099ff 100%);
+        box-shadow: 0 4px 12px rgba(0,123,255,0.4);
+    }
+    .nav-btn:active {
+        transform: translateY(0);
+    }
+    @media (max-width: 768px) {
+        .nav-btn {
+            padding: 0.6rem 1.2rem !important;
+            font-size: 0.9rem !important;
+        }
+    }
+    </style>
+    
+    <!-- Info Banner -->
+    <div class="card-style" style="margin-bottom:1.5rem; padding:1rem; background:#fff3cd; border:1px solid #ffeaa7; border-radius:8px;">
+        <h4 style="margin-bottom:0.5rem; color:#856404; font-size:1rem;">📋 Data Analysis Workflow</h4>
+        <p style="margin:0; color:#856404; font-size:0.9rem;">
+            <strong>Step 1:</strong> <a href="#" onclick="goToOutlierAnalysis()" style="color:#e74c3c; text-decoration:underline;">Analyze & Remove Outliers</a> (if needed)<br>
+            <strong>Step 2:</strong> Clean your data using the operations below<br>
+            <strong>Step 3:</strong> <a href="#" onclick="goToCorrelationAnalysis()" style="color:#007bff; text-decoration:underline;">Analyze Correlations</a><br>
+            <strong>Step 4:</strong> Save your cleaned dataset
+        </p>
+    </div>
+    
+    <h2 style="margin-bottom:1.5rem; display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.7rem; color:#6a0dad;">🧬</span>
+        Data Cleaning Operations for <span style="color:#007bff;">{{ filename }}</span>
+        <small style="color:#666; font-size:0.8rem; margin-left:auto;">({{ domain_display }})</small>
+    </h2>
+    
+    <!-- File Info -->
+    <div class="card-style" style="margin-bottom:1rem; padding:1rem;">
+        <h3 style="margin-bottom:0.5rem; color:#2d3748; font-size:1rem;">Data Summary</h3>
+        <div id="data-info">
+            Rows: <span id="row-count">{{ preview_rows|length }}</span> | 
+            Columns: <span id="col-count">{{ columns|length }}</span>
+        </div>
+    </div>
+    
+    <!-- Data Operations Form -->
+    <div class="card-style" style="margin-bottom:2rem; padding:2rem;">
+        <h3 style="margin-bottom:1rem; color:#2d3748; font-size:1.2rem;">Clean & Transform Data</h3>
+        <form id="data-ops-form">
+            <div id="operations-list"></div>
+            <button type="button" id="add-operation-btn" class="btn-secondary" style="margin: 1rem 0;">+ Add Operation</button>
+            <div>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:1.5rem;">Apply All Operations</button>
+            </div>
+        </form>
+        <div id="result-message" style="margin-top:1.5rem; font-weight:500;"></div>
+    </div>
+    
+    <!-- Results Section -->
+    <div id="results-section" style="display:none;">
+        <div class="card-style" style="margin-bottom:2rem; padding:2rem;">
+            <h3 style="margin-bottom:1rem; color:#059669; font-size:1.2rem;">🎉 Cleaned Data Results</h3>
+            <div id="results-summary" style="margin-bottom:1rem; padding:1rem; background:#f0f9f3; border-radius:8px; border-left:4px solid #059669;">
+            </div>
+            <!-- Save Actions After Processing -->
+            <div id="post-operation-save" style="margin-bottom:1.5rem; padding:1.5rem; background:#f8f9fc; border-radius:8px; border:1px solid #059669;">
+                <h4 style="margin-bottom:1rem; color:#059669; font-size:1rem;">💾 Save Your Processed Data</h4>
+                <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap; margin-bottom:1rem;">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="text" id="post-save-filename" placeholder="Enter filename..." 
+                               style="padding:8px 12px; border:1px solid #059669; border-radius:6px; min-width:250px; font-size:0.95rem;">
+                        <button type="button" id="post-save-btn" class="btn-primary" style="padding:8px 16px; font-size:0.95rem; background:#059669; border-color:#059669;">
+                            💾 Save Processed Data
+                        </button>
+                    </div>
+                    <button type="button" id="download-csv-btn" class="btn-secondary" style="padding:8px 16px; font-size:0.95rem;">
+                        📥 Download CSV
+                    </button>
+                </div>
+                <div id="post-save-message" style="font-size:0.9rem; color:#666;"></div>
+                <small style="color:#666; display:block; margin-top:0.5rem;">
+                    📁 Files will be saved to: <strong>cleaned_data/</strong><br>
+                    ✅ Your original uploaded file will remain unchanged
+                </small>
+            </div>
+            <div id="cleaned-table" style="overflow-x:auto; max-height:400px; overflow-y:auto; border:2px solid #059669; border-radius:8px;">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Original Data Preview -->
+    <div class="card-style" style="padding:2rem;">
+        <h3 style="margin-bottom:1rem; color:#2d3748; font-size:1.2rem;">
+            <span id="preview-title">Original Data Preview</span>
+            <button id="toggle-original" style="margin-left:1rem; font-size:0.8rem; padding:0.3rem 0.8rem;" class="btn-secondary">Hide Original</button>
+        </h3>
+        <div id="preview-table-container" style="display:block;">
+            <!-- DataFrame Preview Table Scrollable Container -->
+            <div style="overflow-x:auto; max-height:250px; overflow-y:auto; margin-bottom:2em;">
+                <style>
+                #preview-table table th,
+                #preview-table table td {
+                    font-size: 0.92em;
+                    vertical-align: middle;
+                    text-align: left;
+                }
+                </style>
+                <div id="preview-table"></div>
+            </div>
+            <!-- Description section -->
+            <div id="description-section">
+                <h4>Description</h4>
+                <p>
+                    This section summarizes key statistics for each numeric column in your dataset. These metrics help you quickly understand the distribution and spread of your data.
+                </p>
+                <style>
+                .table-striped th, .table-striped td { text-align: left; padding: 8px 12px; white-space: nowrap; }
+                .table-striped th { background: #f8f9fa; font-weight: bold; }
+                .table-striped tr:nth-child(even) { background: #f3f3f7; }
+                .description-controls { border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #f9f9fc; }
+                .description-controls > div { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+                .description-controls label { font-weight: 500; color: #6a0dad; display: block; margin-bottom: 0.5rem; }
+                .description-controls .select-container { flex: 1; min-width: 200px; }
+                .description-controls .checkbox-container { border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #fff; max-height: 120px; overflow-y: auto; width: 100%; }
+                .description-controls .select-all-header { border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 4px; background: #f8f9fa; }
+                .description-controls .select-all-header label { font-weight: 600; color: #6a0dad; margin-bottom: 0; }
+                .description-controls .checkbox-item label { font-weight: 400; color: #333; margin-bottom: 2px; }
+                .description-controls input[type="checkbox"] { margin-right: 6px; }
+                .description-controls small { color: #888; display: block; margin-top: 4px; }
+                </style>
+                <div class="description-controls">
+                    <div>
+                        <!-- Columns Selector -->
+                        <div class="select-container">
+                            <label>Columns</label>
+                            <div class="checkbox-container">
+                                <!-- Select All Columns Option -->
+                                <div class="select-all-header">
+                                    <label>
+                                        <input type="checkbox" id="select-all-columns" class="select-all-checkbox">
+                                        Select All Columns
+                                    </label>
+                                </div>
+                                <!-- Individual Column Checkboxes -->
+                                <div id="column-checkboxes">
+                                    {% for col in describe_stats.keys() %}
+                                        <div class="checkbox-item">
+                                            <label>
+                                                <input type="checkbox" class="column-checkbox" value="{{ col }}">
+                                                {{ col }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small>(Check one or more columns)</small>
+                        </div>
+                        <!-- Metrics Selector -->
+                        <div class="select-container">
+                            <label>Metrics</label>
+                            <div class="checkbox-container">
+                                <!-- Select All Metrics Option -->
+                                <div class="select-all-header">
+                                    <label>
+                                        <input type="checkbox" id="select-all-metrics" class="select-all-checkbox">
+                                        Select All Metrics
+                                    </label>
+                                </div>
+                                <!-- Individual Metric Checkboxes -->
+                                <div id="metric-checkboxes">
+                                    {% set metrics = [
+                                        ("count", "Number of non-null values"),
+                                        ("mean", "Mean of the values"),
+                                        ("std", "Standard deviation"),
+                                        ("min", "Minimum value"),
+                                        ("25%", "1st quartile (Q1)"),
+                                        ("50%", "Median (2nd quartile / Q2)"),
+                                        ("75%", "3rd quartile (Q3)"),
+                                        ("max", "Maximum value")
+                                    ] %}
+                                    {% for metric, meaning in metrics %}
+                                        <div class="checkbox-item">
+                                            <label>
+                                                <input type="checkbox" class="metric-checkbox" value="{{ metric }}">
+                                                {{ metric }} - {{ meaning }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small>(Check one or more metrics)</small>
+                        </div>
+                    </div>
+                </div>
+                <!-- Statistics Table -->
+                <div style="overflow-x:auto; max-height:250px; overflow-y:auto;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Column</th>
+                                <th>Metric</th>
+                                <th>Value</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set meanings = {
+                                "count": "Number of non-null values",
+                                "mean": "Mean of the values",
+                                "std": "Standard deviation",
+                                "min": "Minimum value",
+                                "25%": "1st quartile (Q1)",
+                                "50%": "Median (2nd quartile / Q2)",
+                                "75%": "3rd quartile (Q3)",
+                                "max": "Maximum value"
+                            } %}
+                            {% for col, metrics in describe_stats.items() %}
+                                {% for metric, value in metrics.items() %}
+                                    <tr class="stats-row" data-col="{{ col }}" data-metric="{{ metric }}">
+                                        <td>{{ col }}</td>
+                                        <td>{{ metric }}</td>
+                                        <td>{{ value }}</td>
+                                        <td>{{ meanings[metric] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pass data from template to JavaScript -->
+<script>
+try {
+    window.pageData = {
+        columns: {{ columns|tojson|safe }},
+        preview_rows: {{ preview_rows|tojson|safe }},
+        filename: {{ filename|tojson|safe }},
+        domain: {{ domain|tojson|safe }},
+        currentDomain: {{ domain|tojson|safe }},
+        domain_display: {{ domain_display|tojson|safe }},
+        domainDisplay: {{ domain_display|tojson|safe }},
+        describe_stats: {{ describe_stats|tojson|safe }}
+    };
+    console.log("✅ Template data successfully passed to JavaScript");
+    console.log("📊 Data summary:", {
+        columns: window.pageData.columns ? window.pageData.columns.length : 0,
+        rows: window.pageData.preview_rows ? window.pageData.preview_rows.length : 0,
+        filename: window.pageData.filename,
+        domain: window.pageData.domain
+    });
+    // Validate data
+    if (!window.pageData.columns || !Array.isArray(window.pageData.columns)) {
+        console.error("❌ Invalid columns data:", window.pageData.columns);
+        window.pageData.columns = [];
+    }
+    if (!window.pageData.preview_rows || !Array.isArray(window.pageData.preview_rows)) {
+        console.error("❌ Invalid preview_rows data:", window.pageData.preview_rows);
+        window.pageData.preview_rows = [];
+    }
+} catch (error) {
+    console.error("💥 Error passing template data to JavaScript:", error);
+    // Fallback data
+    window.pageData = {
+        columns: [],
+        preview_rows: [],
+        filename: "unknown",
+        domain: "connection",
+        currentDomain: "connection",
+        domain_display: "Connection",
+        domainDisplay: "Connection",
+        describe_stats: {}
+    };
+}
+</script>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='scripts/connection/data_ops.js') }}"></script>
+{% endblock %}
+
+{% endblock %}

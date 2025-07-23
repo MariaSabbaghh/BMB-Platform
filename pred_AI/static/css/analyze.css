@@ -1,0 +1,1147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    color: #2d3748;
+    line-height: 1.6;
+}
+
+.analysis-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #f6f8fa;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.07);
+}
+
+/* Header Section */
+.header-section {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.header-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    color: white;
+    position: relative;
+}
+
+.header-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.1;
+}
+
+.breadcrumb {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.breadcrumb a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.page-title {
+    position: relative;
+    z-index: 1;
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.model-info-bar {
+    background: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+}
+
+.model-details {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.info-badge {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 1px solid #e2e8f0;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #059669;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Introduction Card */
+.intro-card {
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    border: 1px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.intro-icon {
+    background: #0ea5e9;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.intro-content h3 {
+    color: #0c4a6e;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+}
+
+.intro-content p {
+    color: #0369a1;
+    font-weight: 500;
+}
+
+/* Main Content Grid */
+.content-grid {
+    display: grid;
+    gap: 2.5rem;
+}
+
+.section-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1.5px solid #e5e7eb;
+    margin-bottom: 2.5rem;
+    transition: all 0.3s ease;
+}
+
+.section-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.section-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 1.5rem 2rem;
+    border-bottom: 1.5px solid #e2e8f0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #3730a3;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.section-description {
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.section-content {
+    padding: 2rem;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+    border: 2px solid #e0e7ff;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+    margin-bottom: 0.5rem;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-card:hover {
+    border-color: #6366f1;
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.13);
+}
+
+.metric-label {
+    font-size: 1rem;         
+    font-weight: 700;
+    color: #3730a3;
+    font-family: inherit;
+}
+
+.metric-value {
+    font-size: 1rem;         
+    color: #3730a3;
+    font-family: inherit;
+    margin-left: 1rem;
+    margin-right: 0;
+    text-align: right;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* Chart Containers */
+.chart-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* True Matplotlib-style Charts */
+.chart-wrapper {
+    background: #ffffff;
+    border: none;
+    border-radius: 0;
+    padding: 15px;
+    box-shadow: none;
+    margin-bottom: 1.5rem;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+}
+
+#roc-chart,
+#pr-curve {
+    background: #ffffff;
+    max-width: 480px;
+    max-height: 400px;
+    width: 100% !important;
+    height: auto !important;
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+}
+
+/* Remove Chart.js default styling that conflicts with matplotlib */
+.chart-wrapper canvas {
+    border: none;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+/* Matplotlib-specific styling */
+.chart-block {
+    background: #ffffff;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+}
+
+.chart-block .chart-wrapper {
+    background: #ffffff;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px;
+}
+
+.chart-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #3730a3;
+    margin-bottom: 0.15rem;
+    margin-left: 0.5rem;
+}
+
+.chart-desc {
+    font-size: 0.98rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+/* Override any fancy styling for matplotlib charts */
+#roc-chart,
+#pr-curve {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Chart Block for vertical stacking */
+.classification-charts-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.chart-block {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.regression-charts-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+/* Export Section */
+.export-section {
+    text-align: center;
+}
+
+.export-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-export {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 6px -1px rgba(102, 126, 234, 0.3);
+}
+
+.btn-export:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.4);
+}
+
+/* Loading States */
+.loading-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 2rem;
+}
+
+#classification-report-table {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+#classification-report-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f8fafc;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(99,102,241,0.06);
+}
+
+#classification-report-table th, #classification-report-table td {
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+#classification-report-table th {
+    background: #6366f1;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+#classification-report-table tr:last-child td {
+    border-bottom: none;
+}
+
+#classification-report-table tr:hover td {
+    background: #e0e7ff;
+}
+
+#classification-report-section .chart-title {
+    margin-bottom: 0.25rem;
+}
+
+#classification-report-section .chart-desc {
+    margin-bottom: 0.5rem;
+}
+
+#classification-report-section {
+    background: #f4f7ff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.05);
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: #f8f9fd;
+    border-left: 4px solid #6366f1;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.05);
+}
+
+.info-card .section-title {
+    color: #6366f1;
+}
+
+/* Clean Matplotlib-style Confusion Matrix */
+.cm-matplotlib-container {
+    background: white;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 700px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.cm-matplotlib-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: normal;
+    color: #000;
+    margin-bottom: 25px;
+}
+
+.cm-matplotlib-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.cm-matplotlib-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cm-predicted-label {
+    font-size: 12px;
+    color: #000;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.cm-table-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cm-matplotlib-table {
+    border-collapse: collapse;
+    border: 2px solid #000;
+    background: white;
+}
+
+.cm-corner-cell {
+    width: 60px;
+    height: 40px;
+    background: white;
+    border: none;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.cm-header-cell {
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
+    background: white;
+    color: #000;
+    font-size: 12px;
+    font-weight: normal;
+    border: none;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+}
+
+.cm-header-cell:last-child {
+    border-right: none;
+}
+
+.cm-row-header {
+    width: 60px;
+    height: 80px;
+    text-align: center;
+    vertical-align: middle;
+    background: white;
+    color: #000;
+    font-size: 12px;
+    font-weight: normal;
+    border: none;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+}
+
+tbody tr:last-child .cm-row-header {
+    border-bottom: none;
+}
+
+.cm-data-cell {
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #fff;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+tbody tr:last-child .cm-data-cell {
+    border-bottom: none;
+}
+
+.cm-data-cell:last-child {
+    border-right: none;
+}
+
+.cm-data-cell:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    border: 2px solid #333 !important;
+}
+
+.cm-cell-value {
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.cm-true-label {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    font-size: 12px;
+    color: #000;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+/* Colorbar */
+.cm-colorbar-container {
+    margin-top: 40px;
+}
+
+.cm-colorbar-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.cm-colorbar-scale {
+    width: 20px;
+    height: 200px;
+    border: 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cm-colorbar-segment {
+    flex: 1;
+    min-height: 4px;
+}
+
+.cm-colorbar-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+    font-size: 11px;
+    color: #000;
+    padding: 2px 0;
+}
+
+.cm-colorbar-max,
+.cm-colorbar-min {
+    line-height: 1;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .chart-container {
+        grid-template-columns: 1fr;
+    }
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .analysis-container {
+        padding: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.875rem;
+    }
+
+    .model-info-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .export-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-export {
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
+
+    /* Confusion Matrix Responsive */
+    .cm-matplotlib-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .cm-matplotlib-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .cm-corner-cell,
+    .cm-row-header {
+        width: 50px;
+    }
+    
+    .cm-header-cell,
+    .cm-data-cell {
+        width: 65px;
+        height: 65px;
+        font-size: 11px;
+    }
+    
+    .cm-cell-value {
+        font-size: 12px;
+    }
+    
+    .cm-true-label {
+        left: -35px;
+        font-size: 11px;
+    }
+    
+    .cm-colorbar-scale {
+        width: 15px;
+        height: 150px;
+    }
+    
+    .cm-colorbar-labels {
+        height: 150px;
+        font-size: 10px;
+    }
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Analyze CSS with Unsupervised Analysis Styles */
+/* Add these styles to your existing analyze.css file */
+
+/* Clustering Charts Styling */
+.clustering-charts-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.clustering-charts-vertical .chart-block {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Anomaly Detection Charts Styling */
+.anomaly-charts-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.anomaly-charts-vertical .chart-block {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Dimensionality Reduction Charts Styling */
+.dimensionality-charts-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.dimensionality-charts-vertical .chart-block {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Association Rules Charts Styling */
+.association-charts-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.association-charts-vertical .chart-block {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Enhanced Metric Cards for Unsupervised Learning */
+#clustering-metrics-grid .metric-card {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #0ea5e9;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+}
+
+#clustering-metrics-grid .metric-card:hover {
+    border-color: #0284c7;
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+}
+
+#clustering-metrics-grid .metric-label {
+    color: #0369a1;
+}
+
+#clustering-metrics-grid .metric-value {
+    color: #0c4a6e;
+}
+
+#anomaly-metrics-grid .metric-card {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 2px solid #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+#anomaly-metrics-grid .metric-card:hover {
+    border-color: #dc2626;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
+}
+
+#anomaly-metrics-grid .metric-label {
+    color: #dc2626;
+}
+
+#anomaly-metrics-grid .metric-value {
+    color: #991b1b;
+}
+
+#dimensionality-metrics-grid .metric-card {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #22c55e;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+}
+
+#dimensionality-metrics-grid .metric-card:hover {
+    border-color: #16a34a;
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+}
+
+#dimensionality-metrics-grid .metric-label {
+    color: #16a34a;
+}
+
+#dimensionality-metrics-grid .metric-value {
+    color: #15803d;
+}
+
+#association-metrics-grid .metric-card {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+}
+
+#association-metrics-grid .metric-card:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+}
+
+#association-metrics-grid .metric-label {
+    color: #7c3aed;
+}
+
+#association-metrics-grid .metric-value {
+    color: #6d28d9;
+}
+
+/* Enhanced Section Icons */
+.section-title i.fa-sitemap {
+    color: #0ea5e9;
+}
+
+.section-title i.fa-search {
+    color: #ef4444;
+}
+
+.section-title i.fa-compress-arrows-alt {
+    color: #22c55e;
+}
+
+.section-title i.fa-network-wired {
+    color: #8b5cf6;
+}
+
+/* Chart Container Enhancements */
+.chart-wrapper canvas {
+    max-height: 400px;
+    width: 100% !important;
+}
+
+/* Top Rules Table Styling */
+#top-rules-table {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+#top-rules-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #faf5ff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(139, 92, 246, 0.1);
+}
+
+#top-rules-table th,
+#top-rules-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+#top-rules-table th {
+    background: #8b5cf6;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+#top-rules-table tr:last-child td {
+    border-bottom: none;
+}
+
+#top-rules-table tr:hover td {
+    background: #f3e8ff;
+}
+
+/* Enhanced Chart Blocks */
+.chart-block {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.chart-block:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.chart-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+/* Responsive Design for Unsupervised Analysis */
+@media (max-width: 768px) {
+    .clustering-charts-vertical,
+    .anomaly-charts-vertical,
+    .dimensionality-charts-vertical,
+    .association-charts-vertical {
+        gap: 1.5rem;
+    }
+    
+    .chart-block {
+        padding: 1rem;
+    }
+    
+    .chart-title {
+        font-size: 1.125rem;
+    }
+    
+    .chart-desc {
+        font-size: 0.8rem;
+    }
+    
+    .metric-card {
+        padding: 1rem;
+    }
+    
+    .metric-label {
+        font-size: 0.875rem;
+    }
+    
+    .metric-value {
+        font-size: 1.25rem;
+    }
+}
+
+/* Special Styling for Algorithm Comparison Charts */
+.chart-block:has(#clustering-algorithm-comparison-chart),
+.chart-block:has(#anomaly-algorithm-comparison-chart),
+.chart-block:has(#dimensionality-algorithm-comparison-chart) {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #cbd5e1;
+}
+
+/* Enhanced Loading States for Charts */
+.chart-wrapper {
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for Chart Appearance */
+.chart-wrapper canvas {
+    animation: fadeInChart 0.8s ease-out;
+}
+
+@keyframes fadeInChart {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Metrics Grid Layout */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 480px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Special Treatment for Important Metrics */
+.metric-card:has(#silhouette-value),
+.metric-card:has(#anomaly-ratio-value),
+.metric-card:has(#variance-explained-value),
+.metric-card:has(#rules-count-value) {
+    border-width: 3px;
+    transform: scale(1.02);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Tooltip Styling for Metrics */
+.metric-card::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.metric-card:hover::after {
+    opacity: 1;
+}
+
+/* Custom Scrollbar for Table Containers */
+#top-rules-table::-webkit-scrollbar {
+    height: 8px;
+}
+
+#top-rules-table::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+#top-rules-table::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+#top-rules-table::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Enhanced Section Headers for Unsupervised */
+.section-card:has(#clustering-section) .section-header {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-bottom: 2px solid #0ea5e9;
+}
+
+.section-card:has(#anomaly-section) .section-header {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-bottom: 2px solid #ef4444;
+}
+
+.section-card:has(#dimensionality-section) .section-header {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-bottom: 2px solid #22c55e;
+}
+
+.section-card:has(#association-section) .section-header {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-bottom: 2px solid #8b5cf6;
+}

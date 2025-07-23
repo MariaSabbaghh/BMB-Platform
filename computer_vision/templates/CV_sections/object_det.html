@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>Object Detection - CV Types Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/CV-sections/object_det.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="object-detection-container">
+        <!-- Header Section -->
+        <header class="page-header">
+            <div class="header-content">
+                <h1>Object Detection</h1>
+                <p>Deploy and test your custom object detection models with ease</p>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Section -->
+        <section id="dashboard" class="dashboard-section">
+            <div class="dashboard-container">
+                <p>Choose your path to start object detection</p>
+                
+                <div class="dashboard-grid">
+                    <!-- Create New Use Case -->
+                    <div class="dashboard-card create-new">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <h3>Create New Use Case</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Start fresh with a new detection project tailored to your specific needs</p>
+                            <button id="create-new-btn" class="btn btn-primary btn-large">
+                                <i class="fas fa-plus"></i>
+                                Create New
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- My Use Cases -->
+                    <div class="dashboard-card my-cases">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <h3>My Use Cases</h3>
+                        </div>
+                        <div class="card-content">
+                            <p id="my-cases-summary">You have <span id="case-count">0</span> saved use case(s)</p>
+                            <div id="recent-cases" class="recent-cases">
+                                <!-- Recent cases will be displayed here -->
+                            </div>
+                            <button id="view-my-cases-btn" class="btn btn-outline btn-large">
+                                <i class="fas fa-eye"></i>
+                                View All Cases
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Predefined Use Cases -->
+                    <div class="dashboard-card predefined">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3>Predefined Use Cases</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Quick start with popular detection templates and pre-trained models</p>
+                            <button id="predefined-cases-btn" class="btn btn-outline btn-large">
+                                <i class="fas fa-rocket"></i>
+                                Explore Templates
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Use Cases Section -->
+        <section id="use-cases-section" class="section hidden">
+            <div class="section-header">
+                <div class="header-left">
+                    <h2>My Use Cases</h2>
+                    <p>Manage and select from your detection projects</p>
+                </div>
+                <div class="header-actions">
+                    <button id="back-to-dashboard" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                    <button id="create-new-from-list" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create New Use Case
+                    </button>
+                </div>
+            </div>
+            
+            <div id="use-cases-grid" class="use-cases-grid">
+                <!-- Use cases will be populated here -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h3>No use cases found</h3>
+                    <p>Create your first use case to get started with object detection</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Predefined Use Cases Section -->
+        <section id="predefined-section" class="section hidden">
+            <div class="section-header">
+                <div class="header-left">
+                    <h2>Predefined Use Cases</h2>
+                    <p>Quick start templates for common detection scenarios</p>
+                </div>
+                <div class="header-actions">
+                    <button id="back-to-dashboard-predefined" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+            </div>
+            
+            <div id="predefined-grid" class="use-cases-grid">
+                <!-- Predefined cases will be populated here -->
+            </div>
+        </section>
+
+        <!-- Workflow Section -->
+        <section id="workflow-section" class="section hidden">
+            <div class="workflow-header">
+                <button id="back-to-dashboard-workflow" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+                <div class="workflow-title">
+                    <h2 id="workflow-title-text">Object Detection Workflow</h2>
+                    <p id="workflow-subtitle">Follow the steps below to complete your detection</p>
+                </div>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="progress-container">
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Upload Model</h4>
+                            <p>Select your trained model file</p>
+                        </div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Upload Image</h4>
+                            <p>Choose image for detection</p>
+                        </div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Run Detection</h4>
+                            <p>Process and view results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 1: Model Upload -->
+            <div id="step-1" class="workflow-step active">
+                <div class="step-header">
+                    <h3>Step 1: Upload Model</h3>
+                    <p>Upload your trained object detection model</p>
+                </div>
+                
+                <div class="upload-area" id="model-upload-area">
+                    <input type="file" id="model-upload" accept=".h5,.pb,.onnx,.pt,.pth" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h4>Upload Model File</h4>
+                        <p>Click to browse or drag and drop your model file</p>
+                        <div class="supported-formats">
+                            <span class="format">.h5</span>
+                            <span class="format">.pb</span>
+                            <span class="format">.onnx</span>
+                            <span class="format">.pt</span>
+                            <span class="format">.pth</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="model-info" class="file-info hidden">
+                    <!-- Model info will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Step 2: Image Upload -->
+            <div id="step-2" class="workflow-step hidden">
+                <div class="step-header">
+                    <h3>Step 2: Upload Image</h3>
+                    <p>Select an image for object detection</p>
+                </div>
+                
+                <div class="upload-area" id="image-upload-area">
+                    <input type="file" id="image-upload" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <h4>Upload Image</h4>
+                        <p>Click to browse or drag and drop your image</p>
+                        <div class="supported-formats">
+                            <span class="format">JPG</span>
+                            <span class="format">PNG</span>
+                            <span class="format">GIF</span>
+                            <span class="format">WebP</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="image-preview" class="image-preview hidden">
+                    <!-- Image preview will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Step 3: Detection -->
+            <div id="step-3" class="workflow-step hidden">
+                <div class="step-header">
+                    <h3>Step 3: Run Detection</h3>
+                    <p>Process your image with the uploaded model</p>
+                </div>
+                
+                <div class="detection-control">
+                    <button id="start-detection" class="btn btn-primary btn-large">
+                        <i class="fas fa-search"></i>
+                        Start Object Detection
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="results-section hidden">
+                <div class="results-header">
+                    <h3>Detection Results</h3>
+                    <p>Analysis completed successfully</p>
+                </div>
+                
+                <div id="results-content" class="results-content">
+                    <!-- Results will be displayed here -->
+                </div>
+                
+                <div class="results-actions">
+                    <button id="download-results" class="btn btn-outline">
+                        <i class="fas fa-download"></i>
+                        Download Results
+                    </button>
+                    <button id="new-detection" class="btn btn-primary">
+                        <i class="fas fa-redo"></i>
+                        New Detection
+                    </button>
+                    <button id="back-to-main" class="btn btn-primary btn-large">
+                        <i class="fas fa-home"></i>
+                        Go Back to Main Page
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Create Use Case Modal -->
+    <div id="create-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Use Case</h3>
+                <button class="modal-close" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-form">
+                    <div class="form-group">
+                        <label for="use-case-name">Use Case Name *</label>
+                        <input type="text" id="use-case-name" placeholder="e.g., Vehicle Detection System" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="use-case-description">Description</label>
+                        <textarea id="use-case-description" placeholder="Describe the purpose and scope of this detection use case..." rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancel-create" class="btn btn-outline">Cancel</button>
+                <button type="submit" id="confirm-create" class="btn btn-primary">Create Use Case</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Processing Detection</h3>
+            <p>Analyzing your image with the model...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script/CV_sections/object_det.js') }}"></script>
+{% endblock %}

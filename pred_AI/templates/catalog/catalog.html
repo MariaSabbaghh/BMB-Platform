@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/scrollable-table.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="catalog-wrapper">
+    <div class="catalog-header">
+        <h2><i class="fas fa-database"></i> Data Catalog</h2>
+        <p class="catalog-subtitle">Manage and explore your datasets</p>
+    </div>
+    
+    <div class="datasets-container">
+        <div class="datasets-header">
+            <h3><i class="fas fa-table"></i> Datasets</h3>
+            <div class="dataset-count">{{ files|length }} dataset(s)</div>
+        </div>
+        
+        <div class="datasets-list">
+            {% for file in files %}
+            <div class="dataset-item" data-filename="{{ file }}">
+                <div class="dataset-main-info">
+                    <div class="dataset-icon">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    
+                    <div class="dataset-details">
+                        <div class="dataset-name">{{ file.replace('.csv', '') }}</div>
+                        <div class="dataset-type">CSV Dataset</div>
+                        <div class="dataset-quick-stats" id="quick-stats-{{ file }}">
+                            <div class="quick-stat-loading">
+                                <i class="fas fa-spinner fa-spin"></i> Loading stats...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dataset-actions-compact">
+                        <button class="action-btn info-btn" onclick="toggleInfo('{{ file }}')">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Info</span>
+                        </button>
+                        <button class="action-btn preview-btn" onclick="viewFile(this, '{{ file }}')">
+                            <i class="fas fa-eye"></i>
+                            <span>View</span>
+                        </button>
+                        <button class="action-btn features-btn" onclick="toggleFeatures('{{ file }}')">
+                            <i class="fas fa-list"></i>
+                            <span>Features</span>
+                        </button>
+                        <button class="action-btn version-btn" onclick="toggleVersionHistory('{{ file }}')">
+                            <i class="fas fa-history"></i>
+                            <span>Versions</span>
+                        </button>
+                        <a href="{{ url_for('catalog.catalog_train', filename=file) }}" class="action-btn train-btn">
+                            <i class="fas fa-robot"></i>
+                            <span>Train</span>
+                        </a>
+                        <div class="dropdown-container">
+                            <button class="action-btn menu-btn" onclick="toggleMenu('{{ file }}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu" id="menu-{{ file }}">
+                                <a href="{{ url_for('catalog.catalog_download', filename=file) }}" class="menu-item">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </a>
+                                <button class="menu-item" onclick="createVersion('{{ file }}')">
+                                    <i class="fas fa-code-branch"></i>
+                                    Create Version
+                                </button>
+                                <button class="menu-item delete-item" onclick="deleteFile(this, '{{ file }}')">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Info Section -->
+                <div class="collapsible-section info-section" id="info-section-{{ file }}">
+                    <div class="section-content" id="info-content-{{ file }}">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i> Loading dataset information...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- NEW: Features Section -->
+                <div class="collapsible-section features-section" id="features-section-{{ file }}">
+                    <div class="section-content" id="features-content-{{ file }}">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i> Loading feature information...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Version History Section -->
+                <div class="collapsible-section version-section" id="version-section-{{ file }}">
+                    <div class="section-content" id="version-content-{{ file }}">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i> Loading version history...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Preview Section -->
+                <div class="file-preview" id="preview-{{ file }}"></div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not files %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+            <h3>No datasets found</h3>
+            <p>Upload and clean your data files to see them here.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='scripts/catalog/catalog.js') }}"></script>
+{% endblock %}
+
+{% endblock %}

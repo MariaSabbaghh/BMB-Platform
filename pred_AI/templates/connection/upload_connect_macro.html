@@ -1,0 +1,51 @@
+{% macro upload_connect_section() %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> 
+
+<div class="upload-connect-section" id="connection-upload-section">
+    <!-- Upload CSV Box -->
+    <div class="upload-box">
+        <div class="card-content">
+            <h4>Upload CSV or Excel File</h4>
+            <div class="drop-area" id="connection-drop-area">
+                <p>Drag & drop a CSV or Excel file here<br>or <span style="color:#007bff; text-decoration:underline;">click to select</span></p>
+                <input type="file" name="csv_file" accept=".csv,.xls,.xlsx" id="connection-csv-input" style="display:none;" required>
+                <span class="selected-file-name" id="connection-selected-file"></span>
+            </div>
+        </div>
+        <div class="button-container">
+            <form id="connection-csv-upload-form" method="POST" enctype="multipart/form-data" action="/connection/upload_csv/connection">
+                <input type="file" name="csv_file" accept=".csv,.xls,.xlsx" id="connection-csv-input-hidden" style="display:none;" required>
+                <button type="submit" class="btn-upload">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Connect to Database Box -->
+    <div class="db-connect-box">
+        <div class="card-content">
+            <h4>Connect to Database</h4>
+            <div class="db-input-container">
+                <input type="text" name="db_uri" placeholder="Database URI" required id="db-uri-input">
+            </div>
+        </div>
+        <div class="button-container">
+            <form id="connection-db-connect-form" method="POST" action="/connection/connect_db/connection">
+                <input type="hidden" name="db_uri" id="db-uri-hidden">
+                <button type="submit" class="btn-connect">Connect</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='scripts/connection/upload_connect_macro.js') }}"></script>
+{% endblock %}
+
+{% endmacro %}

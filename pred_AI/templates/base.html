@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMB AI Platform</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> <!-- Dark mode MUST be last -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/xai.css') }}">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+ <div class="container">
+        <button class="toggle-button" onclick="toggleSidebar()">❮</button>
+        <aside class="sidebar" id="sidebar">
+            <a href="{{ request.path }}">
+                <img src="{{ url_for('static', filename='images/bmb_logo.png') }}" alt="Logo" class="logo">
+            </a>
+
+            <!-- White menu box -->
+            <div class="nav-box">
+                <h3>Select Domain</h3>
+                <nav>
+                    <a class="{{ 'active' if request.endpoint == 'index' else '' }}" href="{{ url_for('index') }}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="{{ 'active' if request.endpoint == 'connection' else '' }}" href="{{ url_for('connection') }}">
+                        <i class="fas fa-network-wired"></i> Data Connection
+                    </a>
+                    <a class="{{ 'active' if request.endpoint == 'catalog' else '' }}" href="{{ url_for('catalog') }}">
+                        <i class="fas fa-database"></i> Data Catalog
+                    </a>
+                    <a class="{{ 'active' if request.endpoint == 'train' else '' }}" href="{{ url_for('train') }}">
+                        <i class="fas fa-robot"></i> Training
+                    </a>
+                    <a class="{{ 'active' if request.endpoint == 'xai' else '' }}" href="{{ url_for('xai') }}">
+                        <i class="fas fa-brain"></i> XAI
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Theme toggle button BELOW the nav-box -->
+            <button class="theme-toggle-sidebar" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+            </button>
+        </aside>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='scripts/base.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

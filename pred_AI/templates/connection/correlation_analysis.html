@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> 
+
+<div class="module-container" style="max-width:1200px; margin-top:2rem;">
+    <!-- Navigation Buttons -->
+    <div style="margin-bottom:2rem; display:flex; gap:1rem; align-items:center; justify-content:flex-start;">
+        <button onclick="goBack()" class="nav-btn back-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #6c757d; background:#f8f9fa; color:#495057; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem;">
+            <span style="font-size:1.1rem;">←</span>
+            Go Back
+        </button>
+        <button onclick="goToDataOps()" class="nav-btn data-ops-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #059669; background:linear-gradient(135deg, #059669 0%, #10b981 100%); color:white; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem; box-shadow:0 2px 4px rgba(5,150,105,0.2);">
+            <span style="font-size:1.1rem;">🧬</span>
+            Data Operations
+        </button>
+        <button onclick="goToOutlierAnalysis()" class="nav-btn outlier-btn" style="display:flex; align-items:center; gap:0.7rem; padding:0.75rem 1.5rem; border:2px solid #e74c3c; background:linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color:white; border-radius:8px; font-weight:500; transition:all 0.3s ease; cursor:pointer; font-size:0.95rem; box-shadow:0 2px 4px rgba(231,76,60,0.2);">
+            <span style="font-size:1.1rem;">📊</span>
+            Outlier Analysis
+        </button>
+    </div>
+    
+    <h2 style="margin-bottom:1.5rem; display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.7rem; color:#007bff;">📈</span>
+        Correlation Analysis for <span style="color:#007bff;">{{ filename if filename is defined else "Your Data" }}</span>
+        <small style="color:#666; font-size:0.8rem; margin-left:auto;">({{ domain_display if domain_display is defined else "Connection" }})</small>
+    </h2>
+    
+    <!-- Correlation Analysis Form -->
+    <div class="card-style" style="margin-bottom:2rem; padding:2rem;">
+        <h3 style="margin-bottom:1rem; color:#2d3748; font-size:1.2rem;">🔍 Compute Correlations</h3>
+        
+        <form id="correlation-form" style="display:flex; gap:15px; align-items:end; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <div style="min-width:200px;">
+            <label style="font-weight:500; color:#6a0dad; display:block; margin-bottom:5px;">Select Columns</label>
+            <div class="checkbox-container" style="border:1px solid #e2e8f0; border-radius:6px; padding:6px; background:#fff; max-height:120px; overflow-y:auto;">
+                <div class="select-all-header" style="border-bottom:1px solid #e2e8f0; padding-bottom:4px; margin-bottom:4px; background:#f8f9fa;">
+                    <label style="display:block; font-weight:600; color:#6a0dad;">
+                        <input type="checkbox" id="select-all-corr-columns" style="margin-right:6px;">
+                        Select All Columns
+                    </label>
+                </div>
+                <div id="corr-column-checkboxes">
+                    {% if columns is defined %}
+                        {% for column in columns %}
+                        <label style="display:block; margin-bottom:2px; font-weight:400;">
+                            <input type="checkbox" class="corr-column-checkbox" value="{{ column }}" style="margin-right:6px;">
+                            {{ column }}
+                        </label>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <small style="color:#888;">(Check two or more columns)</small>
+            </div>
+            <div style="min-width:150px;">
+                <label style="font-weight:500; color:#6a0dad; display:block; margin-bottom:5px;">Method</label>
+                <select id="method-select" style="width:100%; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
+                    <option value="pearson">Pearson</option>
+                    <option value="spearman">Spearman</option>
+                    <option value="kendall">Kendall</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary" style="padding:8px 20px;">📊 Compute Correlations</button>
+        </form>
+        
+        <div id="correlation-message" style="margin-top:1rem; font-weight:500;"></div>
+    </div>
+    
+    <!-- Results Section -->
+    <div id="results-section" style="display:none;">
+        <div class="card-style" style="margin-bottom:2rem; padding:2rem;">
+            <h3 style="margin-bottom:1rem; color:#007bff; font-size:1.2rem;">📊 Correlation Results</h3>
+            
+            <!-- Method Info -->
+            <div id="method-info" style="margin-bottom:1.5rem; padding:1rem; background:#f0f7ff; border-radius:8px; border-left:4px solid #007bff;">
+                <p id="method-description"></p>
+            </div>
+            
+            <!-- Correlation Matrix -->
+            <div id="correlation-matrix" style="margin-bottom:1.5rem; overflow-x:auto;">
+                <table id="matrix-table" style="width:100%; border-collapse:collapse;">
+                    <!-- Will be populated by JavaScript -->
+                </table>
+            </div>
+            
+            <!-- Heatmap Visualization -->
+            <div id="heatmap-container" style="text-align:center; margin-bottom:2rem;">
+                <h4 style="margin-bottom:1rem; color:#2d3748; font-size:1.1rem;">Heatmap Visualization</h4>
+                <div id="heatmap" style="display:inline-block; max-width:100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+#matrix-table th, #matrix-table td {
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+#matrix-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+#heatmap div:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+</style>
+
+<!-- Pass data to JavaScript -->
+<script>
+    window.pageData = {
+        currentDomain: '{{ domain if domain is defined else "connection" }}',
+        domainDisplay: '{{ domain_display if domain_display is defined else "Connection" }}',
+        filename: '{{ filename if filename is defined else "" }}'
+    };
+    console.log('Correlation analysis page data set:', window.pageData);
+</script>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='scripts/connection/correlation_analysis.js') }}"></script>
+{% endblock %}
+
+{% endblock %}

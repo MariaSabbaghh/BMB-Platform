@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMB AI Platform</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+ <div class="container">
+        <button class="toggle-button" onclick="toggleSidebar()">❮</button>
+        <aside class="sidebar" id="sidebar">
+            <a href="{{ request.path }}">
+                <img src="{{ url_for('static', filename='images/bmb_logo.png') }}" alt="Logo" class="logo">
+            </a>
+
+            <!-- White menu box -->
+            <div class="nav-box">
+                <h3>Computer Vision</h3>
+                <nav>
+                    <a class="{{ 'active' if request.endpoint == 'index' else '' }}" href="{{ url_for('index') }}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a class="{{ 'active' if request.endpoint == 'object_detection.object_detection' else '' }}" href="{{ url_for('object_detection.object_detection') }}">
+                        <i class="fas fa-tag"></i> Object Detection
+                    </a>        
+                    <a href="#segmentation">
+                        <i class="fas fa-puzzle-piece"></i> Semantic Segmentation
+                    </a>
+                    <a href="#generation">
+                        <i class="fas fa-magic"></i> Image Generation
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Theme toggle button BELOW the nav-box -->
+            <button class="theme-toggle-sidebar" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+            </button>
+        </aside>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <script>
+            function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const button = document.querySelector(".toggle-button");
+
+        sidebar.classList.toggle("collapsed");
+        button.classList.toggle("collapsed");
+
+        button.innerHTML = sidebar.classList.contains("collapsed") ? "❯" : "❮";
+    }
+
+    function toggleTheme() {
+        const body = document.body;
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+
+        body.classList.toggle('dark-theme');
+
+        if (body.classList.contains('dark-theme')) {
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Light Mode';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeIcon.textContent = '🌙';
+            themeText.textContent = 'Dark Mode';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedTheme = localStorage.getItem('theme');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Light Mode';
+        }
+    });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Include this in ALL your HTML files -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/train.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/connection.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css')}}"> <!-- Must be last -->
+
+
+<section class="contact-section">
+    <div class="contact-container">
+        <div class="contact-header">
+            <h1>Contact BMB Drive Lebanon</h1>
+            <p>Get in touch with our team for inquiries, support, or partnership opportunities</p>
+        </div>
+
+        <div class="contact-grid">
+            <!-- Contact Information Card -->
+            <div class="contact-card contact-info">
+                <h2><i class="fas fa-info-circle"></i> General Information</h2>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p><a href="mailto:info@bmbgroup.com">info@bmbgroup.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Phone</h3>
+                            <p><a href="tel:+9611294504">+961 1 294 504</a> (Beirut)</p>
+                            <p><a href="tel:+9615921701">+961 5 921 701</a> (Baabda)</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Offices</h3>
+                            <p>Beirut: Gharios Center, Damascus Road, Furn El Chebbak</p>
+                            <p>Baabda: BMB Building, Serail Road</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Information Card -->
+            <div class="contact-card contact-support">
+                <h2><i class="fas fa-headset"></i> Support</h2>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Technical Support</h3>
+                            <p><a href="mailto:support@bmbgroup.com">support@bmbgroup.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>CRM Support</h3>
+                            <p><a href="mailto:crm.support@bmbgroup.com">crm.support@bmbgroup.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <h3>Contact Person</h3>
+                            <!-- <p>Rock Sarouphim</p>
+                            <p><a href="mailto:rock.sarouphim@bmbgroup.com">rock.sarouphim@bmbgroup.com</a></p> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form Card -->
+            <div class="contact-card contact-form">
+                <h2><i class="fas fa-paper-plane"></i> Send Us a Message</h2>
+                <form id="contactForm" method="POST" action="/contact">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject">
+                            <option value="general">General Inquiry</option>
+                            <option value="support">Technical Support</option>
+                            <option value="sales">Sales Inquiry</option>
+                            <option value="partnership">Partnership</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section">
+    <div class="map-container">
+        <h2>Our Locations</h2>
+        <div class="map-grid">
+            <div class="map-card">
+                <h3>Beirut Office</h3>
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3313.3456789012345!2d35.51234567890123!3d33.87654321098765!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDUyJzM1LjYiTiAzNcKwMzAnNDEuNyJF!5e0!3m2!1sen!2slb!4v1234567890123!5m2!1sen!2slb" 
+                            width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <p>2nd Floor, Gharios Center, Damascus Road, Furn El Chebbak, Beirut</p>
+            </div>
+            <div class="map-card">
+                <h3>Baabda Office</h3>
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3313.3456789012345!2d35.54321098765432!3d33.83456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDUwJzA0LjUiTiAzNcKwMzInNDkuOCJF!5e0!3m2!1sen!2slb!4v1234567890123!5m2!1sen!2slb" 
+                            width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <p>BMB Building, Serail Road, Baabda, Lebanon</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+ <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="{{ url_for('static', filename='images/bmb-whitelogo.png') }}" alt="BMB Drive Logo" class="footer-logo-img">
+                    <p>Intelligent Automation & Advanced Analytics</p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.linkedin.com/company/bmb/" class="social-link" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://www.bmbgroup.com" class="social-link" target="_blank" rel="noopener noreferrer">BMB Website</a>
+                </div>
+
+            </div>
+            
+            <div class="footer-section">
+                <ul>
+                    <h4>Support</h4>
+                    <li><a href="{{ url_for('contact') }}">Contact Us</a></li>     
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; Copyright © 2024 BMB Group. All Rights Reserved. Privacy Policy. Anti-Bribery and Anti-Corruption Policy.</p>
+        </div>
+    </footer>
+{% endblock %}

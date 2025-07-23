@@ -1,0 +1,25 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "date": "2025-07-22 11:34:19",
+      "user": "user",
+      "changes": "Initial cleaned version",
+      "rows": 5283,
+      "columns": 11,
+      "size": "1.58 MB",
+      "status": "previous"
+    },
+    {
+      "version": 2,
+      "date": "2025-07-23 12:30:18",
+      "user": "user",
+      "changes": "Updated through cleaning operations",
+      "rows": 200,
+      "columns": 19,
+      "size": "19.76 KB",
+      "status": "current"
+    }
+  ],
+  "current_version": 2
+}

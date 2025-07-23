@@ -1,0 +1,344 @@
+/* Professional Welcome Page Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+    color: #1a202c;
+    line-height: 1.6;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem 2rem;
+    z-index: 1000;
+}
+
+.header-logo {
+    height: 100px;
+    width: auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-logo:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+/* Main Container */
+.welcome-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 120px 2rem 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.content-section {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.content-section h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: #64748b;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* AI Selection Grid - Modified for 3 columns */
+.ai-selection {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ai-option {
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid #e2e8f0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+}
+
+.ai-option:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #cbd5e1;
+}
+
+.ai-option.generative:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+}
+
+.ai-option.predictive:hover {
+    border-color: #10b981;
+    box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1), 0 10px 10px -5px rgba(16, 185, 129, 0.04);
+}
+
+.ai-option.computer-vision:hover {
+    border-color: #8b5cf6;
+    box-shadow: 0 20px 25px -5px rgba(139, 92, 246, 0.1), 0 10px 10px -5px rgba(139, 92, 246, 0.04);
+}
+
+.ai-content {
+    padding: 2.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.generative .ai-icon {
+    background: #dbeafe;
+    color: #3b82f6;
+}
+
+.predictive .ai-icon {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.computer-vision .ai-icon {
+    background: #e9d5ff;
+    color: #8b5cf6;
+}
+
+.ai-option:hover .ai-icon {
+    transform: scale(1.1);
+}
+
+.ai-option h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 0.75rem;
+}
+
+.ai-option p {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.features {
+    list-style: none;
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+.features li {
+    padding: 0.5rem 0;
+    color: #475569;
+    font-size: 0.9rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    color: #10b981;
+}
+
+.generative .features li::before {
+    color: #3b82f6;
+}
+
+.computer-vision .features li::before {
+    color: #8b5cf6;
+}
+
+.cta-button {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 1.25rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+    color: #374151;
+    transition: all 0.3s ease;
+}
+
+.ai-option:hover .cta-button {
+    background: #f1f5f9;
+}
+
+.generative:hover .cta-button {
+    background: #3b82f6;
+    color: white;
+}
+
+.predictive:hover .cta-button {
+    background: #10b981;
+    color: white;
+}
+
+.computer-vision:hover .cta-button {
+    background: #8b5cf6;
+    color: white;
+}
+
+.cta-button i {
+    transition: transform 0.3s ease;
+}
+
+.ai-option:hover .cta-button i {
+    transform: translateX(4px);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ai-option {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.ai-option:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.ai-option:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.ai-option:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading animation */
+.fade-out {
+    opacity: 0;
+    transform: scale(0.98);
+    transition: all 0.4s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .ai-selection {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+    
+    .header-logo {
+        height: 32px;
+    }
+    
+    .welcome-container {
+        padding: 100px 1rem 2rem;
+    }
+    
+    .content-section h1 {
+        font-size: 2.25rem;
+    }
+    
+    .subtitle {
+        font-size: 1.125rem;
+    }
+    
+    .ai-selection {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .ai-content {
+        padding: 2rem;
+    }
+    
+    .cta-button {
+        padding: 1rem 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-section h1 {
+        font-size: 1.875rem;
+    }
+    
+    .ai-content {
+        padding: 1.5rem;
+    }
+    
+    .ai-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 1.75rem;
+    }
+}

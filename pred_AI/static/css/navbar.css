@@ -1,0 +1,381 @@
+/* ====== RESET & BASE ====== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8fafc;
+    color: #2d3748;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ====== NAVBAR CONTAINER ====== */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 320px;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.content {
+    margin-left: 320px;
+    width: calc(100% - 320px);
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed + .content {
+    margin-left: 0;
+    width: 100%;
+}
+
+.toggle-button {
+    position: fixed;
+    top: 20px;
+    left: 300px;
+    z-index: 101;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: #667eea;
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+
+.sidebar.collapsed {
+    transform: translateX(-100%);
+}
+
+.toggle-button.collapsed {
+    left: 20px;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.toggle-button.collapsed:hover {
+    background: #667eea;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ====== LOGO SECTION ====== */
+.logo {
+    margin-top: 20px;
+    width: 250px;
+    height: 120px;
+    margin-bottom: 10px;
+    filter: brightness(1.2) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.02);
+}
+
+.powered {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* ====== NAVIGATION BOX ====== */
+.nav-box {
+    margin-top: 30px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    padding-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2d3748;
+    letter-spacing: 0.3px;
+}
+
+.nav-box h3::before {
+    content: "🌐";
+    font-size: 18px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* ====== NAVIGATION LINKS ====== */
+nav {
+    width: 100%;
+}
+
+nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: #4a5568;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    letter-spacing: 0.2px;
+}
+
+nav a:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    color: #667eea;
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+}
+
+nav a.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    transform: translateX(4px);
+}
+
+nav a.active::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+}
+
+nav a i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+nav a:hover i,
+nav a.active i {
+    transform: scale(1.1);
+}
+
+/* ====== THEME TOGGLE BUTTON ====== */
+.theme-toggle-sidebar {
+    margin-top: 40px;
+    padding: 12px 24px;
+    width: auto;
+    background: rgba(255, 255, 255, 0.95);
+    color: #667eea;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.3px;
+}
+
+.theme-toggle-sidebar:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.theme-toggle-sidebar span {
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle-sidebar:hover span {
+    transform: scale(1.05);
+}
+
+/* ====== DARK MODE STYLES ====== */
+body.dark-theme {
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+body.dark-theme .sidebar {
+    background: linear-gradient(135deg, #2d1b69 0%, #1a1a2e 100%);
+    border-right-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .powered {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-theme .nav-box {
+    background: rgba(45, 55, 72, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .nav-box h3 {
+    color: #e2e8f0;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-theme nav a {
+    color: #cbd5e0;
+}
+
+body.dark-theme nav a:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    color: #667eea;
+}
+
+body.dark-theme nav a.active {
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    color: white;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+body.dark-theme .toggle-button {
+    background: rgba(45, 55, 72, 0.9);
+    color: #e2e8f0;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-theme .toggle-button:hover {
+    background: rgba(45, 55, 72, 1);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+body.dark-theme .toggle-button.collapsed {
+    background: rgba(255, 107, 107, 0.9);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+body.dark-theme .toggle-button.collapsed:hover {
+    background: #ff6b6b;
+}
+
+body.dark-theme .theme-toggle-sidebar {
+    background: rgba(45, 55, 72, 0.95);
+    color: #f7b733;
+    border-color: rgba(247, 183, 51, 0.3);
+}
+
+body.dark-theme .theme-toggle-sidebar:hover {
+    background: linear-gradient(135deg, #f7b733, #fc4a1a);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(247, 183, 51, 0.3);
+}
+
+/* ====== RESPONSIVE DESIGN ====== */
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        height: 100vh;
+        width: 100%;
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+    
+    .sidebar:not(.collapsed) {
+        transform: translateX(0);
+    }
+    
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .sidebar.collapsed + .content {
+        margin-left: 0;
+    }
+    
+    .toggle-button {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+    }
+    
+    .toggle-button.collapsed {
+        left: 15px;
+    }
+    
+    .nav-box {
+        margin-top: 20px;
+        padding: 20px 15px;
+    }
+    
+    .logo {
+        width: 200px;
+        height: 96px;
+        margin-top: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-box {
+        padding: 15px 12px;
+    }
+    
+    nav a {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+    
+    .theme-toggle-sidebar {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+}
